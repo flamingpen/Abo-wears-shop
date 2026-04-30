@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Abo Wears"
+version = "1.0.0"
+id = "artifacts/abo-wears"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21461
+
+[services.development]
+run = "pnpm --filter @workspace/abo-wears run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/abo-wears", "run", "build" ]
+publicDir = "artifacts/abo-wears/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21461"
+BASE_PATH = "/"
