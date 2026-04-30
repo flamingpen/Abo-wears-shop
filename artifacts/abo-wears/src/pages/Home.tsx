@@ -1,6 +1,7 @@
 import { Link } from "wouter";
-import { ShoppingBag, Star, Shield, Zap, CheckCircle, ChevronRight } from "lucide-react";
-import { CATEGORIES, PRODUCTS, formatPrice, WHATSAPP_NUMBER } from "@/data/products";
+import { ShoppingBag, Star, ChevronRight } from "lucide-react";
+import { PRODUCTS, formatPrice, WHATSAPP_NUMBER } from "@/data/products";
+import { storeImg, arsenalJerseysImg, multiClubJerseysImg, nigeriaJerseyImg } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
 
 const REVIEWS = [
@@ -29,84 +30,109 @@ const HOW_TO_BUY = [
 
 const FEATURED_PRODUCTS = PRODUCTS.filter((p) => p.badge).slice(0, 4);
 
-const JERSEY_CATEGORIES = [
-  { id: "retro-jerseys", label: "Retro Jerseys" },
-  { id: "club-jerseys", label: "Club Jerseys" },
-  { id: "country-jerseys", label: "Country Jerseys" },
+const HERO_CATEGORIES = [
+  { label: "Jerseys", href: "/jerseys", emoji: "⚽" },
+  { label: "Joggers", href: "/joggers", emoji: "👟" },
+  { label: "Shorts", href: "/shorts", emoji: "🩳" },
+  { label: "Face Caps", href: "/face-caps", emoji: "🧢" },
+];
+
+const SHOWCASE = [
+  { img: arsenalJerseysImg, label: "Club Jerseys", href: "/jerseys" },
+  { img: multiClubJerseysImg, label: "All Teams Available", href: "/jerseys" },
+  { img: nigeriaJerseyImg, label: "Country Jerseys", href: "/jerseys" },
+  { img: storeImg, label: "Browse Full Store", href: "/jerseys" },
 ];
 
 export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative bg-[#0a0a0a] text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 30% 60%, #22c55e 0%, transparent 60%), radial-gradient(circle at 80% 20%, #16a34a 0%, transparent 50%)" }} />
-        <div className="absolute inset-0" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&auto=format&fit=crop')", backgroundSize: "cover", backgroundPosition: "center", opacity: 0.12 }} />
+      <section className="relative bg-[#0a0a0a] text-white overflow-hidden min-h-[85vh] flex items-center">
+        {/* Background: store photo */}
+        <img
+          src={storeImg}
+          alt="Abo Wears store"
+          className="absolute inset-0 w-full h-full object-cover object-center opacity-30"
+        />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-[#0a0a0a]/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/80 via-transparent to-[#0a0a0a]/40" />
 
-        <div className="relative max-w-6xl mx-auto px-4 py-20 md:py-28 text-center">
+        <div className="relative w-full max-w-6xl mx-auto px-4 py-20 md:py-24 text-center">
           <div className="inline-flex items-center gap-2 bg-[#22c55e]/20 border border-[#22c55e]/40 text-[#22c55e] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
             Now Accepting Orders
           </div>
 
-          <h1 className="font-display text-5xl md:text-7xl text-white leading-none mb-5">
+          <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-none mb-5">
             All Things Jersey<br />
             <span className="text-[#22c55e]">@ Prices You'll Love</span>
           </h1>
 
-          <p className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto mb-8 font-sans">
-            Retro jerseys, club kits, national team jerseys, joggers, shorts & face caps. Quality gear at unbeatable prices — order via WhatsApp in minutes.
+          <p className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto mb-10 font-sans">
+            Retro classics, club kits, national jerseys, joggers, shorts & face caps — quality gear delivered to your door.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/jerseys"
-              className="inline-flex items-center justify-center gap-2 bg-[#22c55e] hover:bg-[#16a34a] text-black font-bold px-8 py-3.5 rounded-full text-base transition-all hover:scale-105"
-              data-testid="hero-shop-now-button"
-            >
-              <ShoppingBag size={18} />
-              Shop Now
-            </Link>
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Abo%20Wears%2C%20I%20want%20to%20see%20your%20catalog`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-3.5 rounded-full text-base transition-all border border-white/20"
-              data-testid="hero-whatsapp-button"
-            >
-              💬 Chat on WhatsApp
-            </a>
+          {/* 4 Category Buttons */}
+          <div className="flex flex-wrap justify-center gap-3">
+            {HERO_CATEGORIES.map((cat) => (
+              <Link
+                key={cat.href}
+                href={cat.href}
+                className="flex items-center gap-2 bg-white/10 hover:bg-[#22c55e] hover:text-black text-white font-bold px-6 py-3.5 rounded-full text-sm md:text-base transition-all duration-200 border border-white/20 hover:border-[#22c55e] backdrop-blur-sm hover:scale-105"
+                data-testid={`hero-cat-${cat.label.toLowerCase().replace(" ", "-")}`}
+              >
+                <span>{cat.emoji}</span>
+                {cat.label}
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Category Buttons */}
-      <section className="bg-[#111111] py-8">
+      {/* Image Showcase Strip */}
+      <section className="bg-[#0a0a0a] pb-6">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-            {/* Jersey categories link to /jerseys */}
-            {JERSEY_CATEGORIES.map((cat) => (
-              <Link
-                key={cat.id}
-                href="/jerseys"
-                className="flex flex-col items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-800 hover:border-[#22c55e] rounded-xl p-4 transition-all group text-center"
-                data-testid={`category-button-${cat.id}`}
-              >
-                <span className="text-2xl">⚽</span>
-                <span className="font-barlow text-xs font-600 uppercase tracking-wide leading-tight">{cat.label}</span>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {SHOWCASE.map((item, i) => (
+              <Link key={i} href={item.href} className="relative group overflow-hidden rounded-xl aspect-square block">
+                <img
+                  src={item.img}
+                  alt={item.label}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                <span className="absolute bottom-3 left-3 right-3 text-white font-barlow font-700 text-sm uppercase tracking-wide leading-tight">
+                  {item.label}
+                </span>
               </Link>
             ))}
-            <Link href="/joggers" className="flex flex-col items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-800 hover:border-[#22c55e] rounded-xl p-4 transition-all group text-center" data-testid="category-button-joggers">
-              <span className="text-2xl">👟</span>
-              <span className="font-barlow text-xs font-600 uppercase tracking-wide">Joggers</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Category Nav */}
+      <section className="bg-[#111111] py-6 border-y border-gray-800">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex overflow-x-auto gap-3 pb-1 scrollbar-none justify-center flex-wrap">
+            <Link href="/jerseys" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-jerseys">
+              ⚽ Retro Jerseys
             </Link>
-            <Link href="/shorts" className="flex flex-col items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-800 hover:border-[#22c55e] rounded-xl p-4 transition-all group text-center" data-testid="category-button-shorts">
-              <span className="text-2xl">🩳</span>
-              <span className="font-barlow text-xs font-600 uppercase tracking-wide">Shorts</span>
+            <Link href="/jerseys" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-club">
+              🏆 Club Jerseys
             </Link>
-            <Link href="/face-caps" className="flex flex-col items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-800 hover:border-[#22c55e] rounded-xl p-4 transition-all group text-center" data-testid="category-button-face-caps">
-              <span className="text-2xl">🧢</span>
-              <span className="font-barlow text-xs font-600 uppercase tracking-wide">Face Caps</span>
+            <Link href="/jerseys" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-country">
+              🌍 Country Jerseys
+            </Link>
+            <Link href="/joggers" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-joggers">
+              👟 Joggers
+            </Link>
+            <Link href="/shorts" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-shorts">
+              🩳 Shorts
+            </Link>
+            <Link href="/face-caps" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-caps">
+              🧢 Face Caps
             </Link>
           </div>
         </div>
@@ -215,14 +241,14 @@ export default function Home() {
               className="inline-flex items-center justify-center gap-2 bg-[#0a0a0a] hover:bg-[#22c55e] text-white hover:text-black font-bold px-8 py-3.5 rounded-full text-base transition-all"
               data-testid="cta-shop-jerseys"
             >
-              Shop Jerseys
+              ⚽ Shop Jerseys
             </Link>
             <Link
               href="/cart"
               className="inline-flex items-center justify-center gap-2 bg-[#22c55e] hover:bg-[#16a34a] text-black font-bold px-8 py-3.5 rounded-full text-base transition-all"
               data-testid="cta-view-cart"
             >
-              View Cart
+              <ShoppingBag size={16} /> View Cart
             </Link>
           </div>
         </div>
