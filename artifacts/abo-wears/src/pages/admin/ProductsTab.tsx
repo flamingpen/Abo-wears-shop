@@ -5,6 +5,7 @@ import { useAdminProducts, useCategories } from "@/hooks/useProducts";
 import { AVAILABLE_COLORS } from "@/lib/colors";
 import { ColorSwatches } from "@/components/ColorSwatches";
 import { Plus, Pencil, Trash2, X, Check } from "lucide-react";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 function formatPrice(n: number) {
   return `₦${Number(n).toLocaleString("en-NG")}`;
@@ -255,18 +256,12 @@ export function ProductsTab() {
                   </select>
                 </div>
               </div>
-              <div>
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide block mb-1.5">Image URL *</label>
-                <input
-                  value={form.image}
-                  onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
-                  placeholder="https://..."
-                  className="w-full bg-[#1a1a1a] border border-gray-700 text-white rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] placeholder:text-gray-600"
-                />
-                {form.image && (
-                  <img src={form.image} alt="preview" className="mt-2 w-20 h-20 object-cover rounded-lg bg-gray-800" />
-                )}
-              </div>
+              <ImageUpload
+                label="Product Image *"
+                value={form.image}
+                onChange={(url) => setForm((f) => ({ ...f, image: url }))}
+                folder="products"
+              />
               <div>
                 <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide block mb-1.5">Badge (optional)</label>
                 <input

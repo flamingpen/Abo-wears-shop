@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAllPromos, usePromoProducts } from "@/hooks/usePromos";
 import { Plus, Pencil, Trash2, X, Tag, ToggleLeft, ToggleRight, ChevronDown, ChevronUp } from "lucide-react";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import type { DbPromo } from "@/lib/supabase";
 
 function formatPrice(n: number) {
@@ -85,11 +86,11 @@ function PromoItemsSection({ promoId }: { promoId: string }) {
           placeholder="Product name"
           className="w-full bg-[#111111] border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] placeholder:text-gray-600"
         />
-        <input
+        <ImageUpload
+          label="Item Image"
           value={form.image}
-          onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
-          placeholder="Image URL (https://...)"
-          className="w-full bg-[#111111] border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] placeholder:text-gray-600"
+          onChange={(url) => setForm((f) => ({ ...f, image: url }))}
+          folder="promo-items"
         />
         <div className="grid grid-cols-2 gap-2">
           <input
@@ -292,15 +293,12 @@ export function PromosTab() {
                   className="w-full bg-[#1a1a1a] border border-gray-700 text-white rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] placeholder:text-gray-600"
                 />
               </div>
-              <div>
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide block mb-1.5">Banner Image URL (optional)</label>
-                <input
-                  value={form.banner_image}
-                  onChange={(e) => setForm((f) => ({ ...f, banner_image: e.target.value }))}
-                  placeholder="https://..."
-                  className="w-full bg-[#1a1a1a] border border-gray-700 text-white rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] placeholder:text-gray-600"
-                />
-              </div>
+              <ImageUpload
+                label="Banner Image (optional)"
+                value={form.banner_image}
+                onChange={(url) => setForm((f) => ({ ...f, banner_image: url }))}
+                folder="promo-banners"
+              />
               <div className="bg-[#22c55e]/5 border border-[#22c55e]/20 rounded-lg p-3">
                 <p className="text-gray-400 text-xs">
                   💡 After creating the promo, expand it to add items with price slashes. Then toggle it <strong className="text-[#22c55e]">Live</strong> to show the homepage banner.

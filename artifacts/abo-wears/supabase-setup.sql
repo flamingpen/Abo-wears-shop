@@ -180,7 +180,22 @@ INSERT INTO products (id, name, price, category_id, image, badge, active) VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================
--- Done! Your database is ready.
--- Next: Go to your Supabase dashboard → Authentication → Users
--- and create accounts for the two admin email addresses.
+-- Done! Your database tables and seed data are ready.
+--
+-- NEXT STEPS:
+--
+-- 1. IMAGE UPLOADS (for uploading photos from phone/computer):
+--    Go to Supabase → Storage → Create a new bucket
+--    Bucket name:  product-images
+--    Public bucket: YES (toggle on)
+--    Click "Create bucket"
+--    Then click the bucket → Policies → Enable public access
+--
+-- 2. ADMIN ACCOUNTS:
+--    Go to Supabase → Authentication → Users → Add user
+--    Create accounts for:
+--      flamingpen1@gmail.com
+--      aboluwasesan62@gmail.com
+--    Set a password for each. These are the only logins
+--    that can access /admin on the site.
 -- ============================================================
