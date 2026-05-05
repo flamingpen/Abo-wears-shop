@@ -13,7 +13,7 @@ export function Footer() {
               <span className="font-display text-2xl tracking-widest text-[#22c55e]">WEARS</span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Your number one destination for quality jerseys, joggers, shorts, and face caps at prices you'll love.
+              Your number one destination for quality jerseys, joggers, shorts, gloves, and face caps at prices you'll love.
             </p>
           </div>
 
@@ -25,9 +25,13 @@ export function Footer() {
                 { label: "Retro Jerseys", href: "/jerseys" },
                 { label: "Club Jerseys", href: "/jerseys" },
                 { label: "Country Jerseys", href: "/jerseys" },
+                { label: "NFL Jerseys", href: "/jerseys" },
+                { label: "Basketball Jerseys", href: "/jerseys" },
+                { label: "Baseball Jerseys", href: "/jerseys" },
                 { label: "Joggers", href: "/joggers" },
                 { label: "Shorts", href: "/shorts" },
                 { label: "Face Caps", href: "/face-caps" },
+                { label: "Gloves", href: "/gloves" },
                 { label: "About Us", href: "/about" },
               ].map((link) => (
                 <li key={link.label}>
@@ -72,7 +76,7 @@ export function Footer() {
 
         <div className="border-t border-gray-800 mt-10 pt-6 text-center">
           <p className="text-gray-500 text-xs">
-            &copy; {new Date().getFullYear()} Abo Wears. All rights reserved. | OAU New Market, Ile-Ife
+            &copy; {new Date().getFullYear()} ABO Wears. All rights reserved. | OAU New Market, Ile-Ife
           </p>
         </div>
       </div>

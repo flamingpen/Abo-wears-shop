@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { label: "Joggers", href: "/joggers" },
   { label: "Shorts", href: "/shorts" },
   { label: "Face Caps", href: "/face-caps" },
+  { label: "Gloves", href: "/gloves" },
   { label: "About", href: "/about" },
 ];
 
@@ -25,7 +26,7 @@ export function Navbar() {
           <span className="font-display text-2xl tracking-widest text-[#22c55e]">WEARS</span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-5">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}

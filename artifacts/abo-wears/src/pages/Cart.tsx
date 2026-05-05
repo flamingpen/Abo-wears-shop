@@ -4,11 +4,19 @@ import { Trash2, Minus, Plus, ShoppingBag, MessageCircle, ArrowLeft } from "luci
 import { useCart } from "@/context/CartContext";
 import { formatPrice, WHATSAPP_NUMBER } from "@/data/products";
 
+const SIZES = [
+  { value: "Small", label: "S", fullLabel: "Small" },
+  { value: "Medium", label: "M", fullLabel: "Medium" },
+  { value: "Large", label: "L", fullLabel: "Large" },
+  { value: "Extra Large", label: "XL", fullLabel: "Extra Large" },
+];
+
 export default function Cart() {
   const { items, removeFromCart, updateQuantity, total, clearCart } = useCart();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [size, setSize] = useState("");
 
   function handleWhatsApp() {
     if (items.length === 0) return;
@@ -23,8 +31,9 @@ export default function Cart() {
     const deliveryLine = address ? `\n\nDelivery Address: ${address}` : "";
     const contactLine = phone ? `\nPhone: ${phone}` : "";
     const nameLine = name ? `\nName: ${name}` : "";
+    const sizeLine = size ? `\nSize: ${size}` : "";
 
-    const message = `Hello Abo Wears, I want to order:\n${itemLines}\n\nTotal: ${formatPrice(total)}${nameLine}${contactLine}${deliveryLine}`;
+    const message = `Hello ABO Wears, I want to order:\n${itemLines}\n\nTotal: ${formatPrice(total)}${nameLine}${contactLine}${sizeLine}${deliveryLine}`;
 
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, "_blank");
@@ -161,6 +170,35 @@ export default function Cart() {
                     data-testid="input-phone"
                   />
                 </div>
+
+                {/* Size Selection */}
+                <div>
+                  <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                    Size
+                  </label>
+                  <div className="flex gap-2 flex-wrap">
+                    {SIZES.map((s) => (
+                      <button
+                        key={s.value}
+                        type="button"
+                        onClick={() => setSize(s.value)}
+                        className={`px-3.5 py-2 rounded-lg text-sm font-semibold border transition-all ${
+                          size === s.value
+                            ? "bg-[#22c55e] border-[#22c55e] text-black"
+                            : "border-input bg-background text-foreground hover:border-[#22c55e] hover:text-[#22c55e]"
+                        }`}
+                        data-testid={`size-${s.value.toLowerCase().replace(" ", "-")}`}
+                        title={s.fullLabel}
+                      >
+                        {s.label}
+                      </button>
+                    ))}
+                  </div>
+                  {size && (
+                    <p className="text-xs text-[#22c55e] mt-1.5">Selected: {size}</p>
+                  )}
+                </div>
+
                 <div>
                   <label className="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
                     Delivery Address{" "}

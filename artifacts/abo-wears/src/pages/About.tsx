@@ -8,7 +8,7 @@ export default function About() {
       <div className="bg-[#0a0a0a] text-white py-10 px-4">
         <div className="max-w-4xl mx-auto">
           <h1 className="font-display text-5xl md:text-6xl text-white mb-2">About Us</h1>
-          <p className="text-gray-400">Learn more about Abo Wears</p>
+          <p className="text-gray-400">Learn more about ABO Wears</p>
         </div>
       </div>
 
@@ -21,16 +21,16 @@ export default function About() {
           </div>
           <div className="space-y-4 text-muted-foreground leading-relaxed">
             <p>
-              Welcome to <strong className="text-foreground">Abo Wears</strong> — your number one stop for quality jerseys and sporty streetwear in Ile-Ife, Nigeria. We specialize in retro jerseys, club football kits, national team jerseys, joggers, training shorts, and face caps.
+              Welcome to <strong className="text-foreground">ABO Wears</strong> — your number one stop for quality jerseys and sporty streetwear in Ile-Ife, Nigeria. We specialize in retro jerseys, club football kits, country jerseys, NFL jerseys, basketball jerseys, baseball jerseys, joggers, training shorts, face caps, and gloves.
             </p>
             <p>
-              Our mission is simple: bring you the best quality sportswear at prices you can actually afford. Whether you're a football fanatic looking for that classic vintage shirt, or you just want comfortable everyday sports gear — we've got you covered.
+              Our mission is simple: bring you the best quality sportswear at prices you can actually afford. Whether you're a football fanatic looking for that classic vintage shirt, a basketball lover hunting for your favourite team's kit, or you just want comfortable everyday sports gear — we've got you covered.
             </p>
             <p>
               Based at OAU New Market in Ile-Ife, we serve customers across Nigeria. Ordering is easy — browse our catalog, add to cart, and place your order directly via WhatsApp. We respond fast and ensure your items are delivered safely.
             </p>
             <p>
-              Trusted by hundreds of customers. Known for quality, honesty, and great prices. That's the Abo Wears promise.
+              Trusted by hundreds of customers. Known for quality, honesty, and great prices. That's the ABO Wears promise.
             </p>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function About() {
             </div>
 
             <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Abo%20Wears%2C%20I%20have%20a%20question`}
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20ABO%20Wears%2C%20I%20have%20a%20question`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-whatsapp inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-full text-sm mt-2"
@@ -102,7 +102,7 @@ export default function About() {
           </div>
           <div className="aspect-video">
             <iframe
-              title="Abo Wears Location"
+              title="ABO Wears Location"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.9523!2d4.5437!3d7.4706!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103889e85bb5ef05%3A0x8ab0e88ea8dae2c6!2sObafemi+Awolowo+University%2C+Ile-Ife!5e0!3m2!1sen!2sng!4v1680000000000!5m2!1sen!2sng"
               width="100%"
               height="100%"
