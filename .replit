@@ -30,3 +30,10 @@ externalPort = 8081
 [[ports]]
 localPort = 21461
 externalPort = 80
+
+[userenv]
+
+[userenv.shared]
+VITE_SUPABASE_URL = "https://yxhksdqimaxkqcjnjykn.supabase.co"
+VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4aGtzZHFpbWF4a3Fjam5qeWtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5NzkxODcsImV4cCI6MjA5MzU1NTE4N30.Qxwfuf5MYINgzTtIzg7J6vPTzpk-uDhkxVFbY4U2EkM"
+VITE_ADMIN_EMAILS = "flamingpen1@gmail.com,aboluwasesan62@gmail.com"

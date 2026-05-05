@@ -5,11 +5,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { PromoBanner } from "@/components/PromoBanner";
 import Home from "@/pages/Home";
 import Jerseys from "@/pages/Jerseys";
 import CategoryPage from "@/pages/CategoryPage";
 import Cart from "@/pages/Cart";
 import About from "@/pages/About";
+import PromoPage from "@/pages/PromoPage";
+import AdminPage from "@/pages/admin/AdminPage";
 import NotFound from "@/pages/not-found";
 import { WHATSAPP_NUMBER } from "@/data/products";
 
@@ -33,34 +36,59 @@ function WhatsAppFAB() {
   );
 }
 
-function Router() {
+function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      <PromoBanner />
       <Navbar />
-      <main>
-        <Switch>
-          <Route path="/" component={Home} />
-          <Route path="/jerseys" component={Jerseys} />
-          <Route path="/joggers">
-            {() => <CategoryPage category="joggers" />}
-          </Route>
-          <Route path="/shorts">
-            {() => <CategoryPage category="shorts" />}
-          </Route>
-          <Route path="/face-caps">
-            {() => <CategoryPage category="face-caps" />}
-          </Route>
-          <Route path="/gloves">
-            {() => <CategoryPage category="gloves" />}
-          </Route>
-          <Route path="/cart" component={Cart} />
-          <Route path="/about" component={About} />
-          <Route component={NotFound} />
-        </Switch>
-      </main>
+      <main>{children}</main>
       <Footer />
       <WhatsAppFAB />
     </>
+  );
+}
+
+function Router() {
+  return (
+    <Switch>
+      {/* Admin — no store layout */}
+      <Route path="/admin" component={AdminPage} />
+
+      {/* Store pages */}
+      <Route path="/">
+        {() => <StoreLayout><Home /></StoreLayout>}
+      </Route>
+      <Route path="/jerseys">
+        {() => <StoreLayout><Jerseys /></StoreLayout>}
+      </Route>
+      <Route path="/joggers">
+        {() => <StoreLayout><CategoryPage category="joggers" /></StoreLayout>}
+      </Route>
+      <Route path="/shorts">
+        {() => <StoreLayout><CategoryPage category="shorts" /></StoreLayout>}
+      </Route>
+      <Route path="/face-caps">
+        {() => <StoreLayout><CategoryPage category="face-caps" /></StoreLayout>}
+      </Route>
+      <Route path="/gloves">
+        {() => <StoreLayout><CategoryPage category="gloves" /></StoreLayout>}
+      </Route>
+      <Route path="/category/:id">
+        {({ id }) => <StoreLayout><CategoryPage category={id as never} /></StoreLayout>}
+      </Route>
+      <Route path="/promo/:id">
+        {({ id }) => <StoreLayout><PromoPage /></StoreLayout>}
+      </Route>
+      <Route path="/cart">
+        {() => <StoreLayout><Cart /></StoreLayout>}
+      </Route>
+      <Route path="/about">
+        {() => <StoreLayout><About /></StoreLayout>}
+      </Route>
+      <Route>
+        {() => <StoreLayout><NotFound /></StoreLayout>}
+      </Route>
+    </Switch>
   );
 }
 

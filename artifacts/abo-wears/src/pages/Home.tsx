@@ -1,96 +1,96 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { ShoppingBag, Star, ChevronRight } from "lucide-react";
-import { PRODUCTS, formatPrice, WHATSAPP_NUMBER } from "@/data/products";
+import { PRODUCTS, formatPrice } from "@/data/products";
 import { storeImg, arsenalJerseysImg, multiClubJerseysImg, nigeriaJerseyImg } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBar } from "@/components/SearchBar";
+import { useProducts, useCategories } from "@/hooks/useProducts";
+import { trackPageView } from "@/lib/supabase";
 
 const REVIEWS = [
-  { name: "Tunde A.", location: "Lagos", text: "Got my Arsenal retro jersey in 2 days. Quality is amazing, looks exactly as pictured. ABO Wears never disappoints!", rating: 5 },
-  { name: "Chiamaka O.", location: "Ibadan", text: "Ordered joggers and shorts. Great fit, great price. I've already recommended this store to my friends.", rating: 5 },
-  { name: "Emeka R.", location: "Ile-Ife", text: "Super Eagles jersey arrived fast and the quality is top notch. Very affordable. Will definitely order again!", rating: 5 },
-  { name: "Fatima B.", location: "Abuja", text: "Love the face caps! Got 2 pieces and the delivery was quick. Packaging was neat. Trusted vendor for sure.", rating: 5 },
-  { name: "Seun M.", location: "Port Harcourt", text: "Man City jersey looks premium. Price is the best I've found anywhere. ABO Wears is the real deal.", rating: 5 },
+  { name: "Tunde A.",    location: "Lagos",         text: "Got my Arsenal retro jersey in 2 days. Quality is amazing, looks exactly as pictured. ABO Wears never disappoints!", rating: 5 },
+  { name: "Chiamaka O.", location: "Ibadan",        text: "Ordered joggers and shorts. Great fit, great price. I've already recommended this store to my friends.", rating: 5 },
+  { name: "Emeka R.",    location: "Ile-Ife",       text: "Super Eagles jersey arrived fast and the quality is top notch. Very affordable. Will definitely order again!", rating: 5 },
+  { name: "Fatima B.",   location: "Abuja",         text: "Love the face caps! Got 2 pieces and the delivery was quick. Packaging was neat. Trusted vendor for sure.", rating: 5 },
+  { name: "Seun M.",     location: "Port Harcourt", text: "Man City jersey looks premium. Price is the best I've found anywhere. ABO Wears is the real deal.", rating: 5 },
 ];
 
 const WHY_CHOOSE = [
   { icon: "💰", title: "Affordable Prices", desc: "Jerseys, joggers & more at prices that won't break the bank." },
-  { icon: "⭐", title: "Quality Products", desc: "Every item is carefully selected to meet high quality standards." },
-  { icon: "⚡", title: "Fast Response", desc: "We respond quickly on WhatsApp. Place your order today!" },
-  { icon: "✅", title: "Trusted Vendor", desc: "Hundreds of happy customers across Nigeria trust ABO Wears." },
+  { icon: "⭐", title: "Quality Products",  desc: "Every item is carefully selected to meet high quality standards." },
+  { icon: "⚡", title: "Fast Response",     desc: "We respond quickly on WhatsApp. Place your order today!" },
+  { icon: "✅", title: "Trusted Vendor",    desc: "Hundreds of happy customers across Nigeria trust ABO Wears." },
 ];
 
 const HOW_TO_BUY = [
-  { step: "1", title: "Browse & Pick", desc: "Browse our catalog and pick the items you love." },
-  { step: "2", title: "Add to Cart", desc: "Add selected items to your cart." },
-  { step: "3", title: "Click Buy Now", desc: "Go to cart and click the Buy Now button." },
+  { step: "1", title: "Browse & Pick",  desc: "Browse our catalog and pick the items you love." },
+  { step: "2", title: "Add to Cart",    desc: "Add selected items to your cart." },
+  { step: "3", title: "Click Buy Now",  desc: "Go to cart and click the Buy Now button." },
   { step: "4", title: "Send via WhatsApp", desc: "Your order is pre-filled — just hit send!" },
-  { step: "5", title: "Make Payment", desc: "You'll receive account details for payment." },
-  { step: "6", title: "Send Receipt", desc: "Send your payment receipt to confirm your order." },
+  { step: "5", title: "Make Payment",   desc: "You'll receive account details for payment." },
+  { step: "6", title: "Send Receipt",   desc: "Send your payment receipt to confirm your order." },
+];
+
+const HERO_CATEGORIES = [
+  { label: "Jerseys",   href: "/jerseys",   emoji: "⚽" },
+  { label: "Joggers",   href: "/joggers",   emoji: "👟" },
+  { label: "Shorts",    href: "/shorts",    emoji: "🩳" },
+  { label: "Face Caps", href: "/face-caps", emoji: "🧢" },
+  { label: "Gloves",    href: "/gloves",    emoji: "🥊" },
+];
+
+const SHOWCASE = [
+  { img: arsenalJerseysImg,    label: "Club Jerseys",        href: "/jerseys" },
+  { img: multiClubJerseysImg,  label: "All Teams Available", href: "/jerseys" },
+  { img: nigeriaJerseyImg,     label: "Country Jerseys",     href: "/jerseys" },
+  { img: storeImg,             label: "Browse Full Store",   href: "/jerseys" },
 ];
 
 const FEATURED_PRODUCTS = PRODUCTS.filter((p) => p.badge).slice(0, 4);
 
-const HERO_CATEGORIES = [
-  { label: "Jerseys", href: "/jerseys", emoji: "⚽" },
-  { label: "Joggers", href: "/joggers", emoji: "👟" },
-  { label: "Shorts", href: "/shorts", emoji: "🩳" },
-  { label: "Face Caps", href: "/face-caps", emoji: "🧢" },
-  { label: "Gloves", href: "/gloves", emoji: "🥊" },
-];
-
-const SHOWCASE = [
-  { img: arsenalJerseysImg, label: "Club Jerseys", href: "/jerseys" },
-  { img: multiClubJerseysImg, label: "All Teams Available", href: "/jerseys" },
-  { img: nigeriaJerseyImg, label: "Country Jerseys", href: "/jerseys" },
-  { img: storeImg, label: "Browse Full Store", href: "/jerseys" },
-];
-
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const { data: allProducts = PRODUCTS } = useProducts();
+  const { data: categories = [] } = useCategories();
+
+  useEffect(() => {
+    trackPageView("/");
+  }, []);
 
   const searchResults = searchQuery.trim()
-    ? PRODUCTS.filter((p) =>
+    ? allProducts.filter((p) =>
         p.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : [];
+
+  const featuredProducts = allProducts.filter((p) => p.badge).slice(0, 4);
 
   return (
     <div>
       {/* Hero */}
       <section className="relative bg-[#0a0a0a] text-white overflow-hidden min-h-[85vh] flex items-center">
-        <img
-          src={storeImg}
-          alt="ABO Wears store"
-          className="absolute inset-0 w-full h-full object-cover object-center opacity-30"
-        />
+        <img src={storeImg} alt="ABO Wears store" className="absolute inset-0 w-full h-full object-cover object-center opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-[#0a0a0a]/30" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/80 via-transparent to-[#0a0a0a]/40" />
-
         <div className="relative w-full max-w-6xl mx-auto px-4 py-20 md:py-24 text-center">
           <div className="inline-flex items-center gap-2 bg-[#22c55e]/20 border border-[#22c55e]/40 text-[#22c55e] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
             Now Accepting Orders
           </div>
-
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-none mb-5">
             All Things Jersey<br />
             <span className="text-[#22c55e]">@ Prices You'll Love</span>
           </h1>
-
           <p className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto mb-10 font-sans">
             Retro classics, club kits, country jerseys, NFL, Basketball & Baseball jerseys, joggers, shorts, face caps & gloves — quality gear delivered to your door.
           </p>
-
-          {/* Category Buttons */}
           <div className="flex flex-wrap justify-center gap-3">
             {HERO_CATEGORIES.map((cat) => (
               <Link
                 key={cat.href}
                 href={cat.href}
                 className="flex items-center gap-2 bg-white/10 hover:bg-[#22c55e] hover:text-black text-white font-bold px-6 py-3.5 rounded-full text-sm md:text-base transition-all duration-200 border border-white/20 hover:border-[#22c55e] backdrop-blur-sm hover:scale-105"
-                data-testid={`hero-cat-${cat.label.toLowerCase().replace(" ", "-")}`}
               >
                 <span>{cat.emoji}</span>
                 {cat.label}
@@ -100,61 +100,55 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Image Showcase Strip */}
+      {/* Showcase Strip */}
       <section className="bg-[#0a0a0a] pb-6">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {SHOWCASE.map((item, i) => (
               <Link key={i} href={item.href} className="relative group overflow-hidden rounded-xl aspect-square block">
-                <img
-                  src={item.img}
-                  alt={item.label}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                <img src={item.img} alt={item.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                <span className="absolute bottom-3 left-3 right-3 text-white font-barlow font-700 text-sm uppercase tracking-wide leading-tight">
-                  {item.label}
-                </span>
+                <span className="absolute bottom-3 left-3 right-3 text-white font-barlow font-700 text-sm uppercase tracking-wide leading-tight">{item.label}</span>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Quick Category Nav */}
+      {/* Dynamic Category Nav */}
       <section className="bg-[#111111] py-6 border-y border-gray-800">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex overflow-x-auto gap-3 pb-1 scrollbar-none justify-start md:justify-center flex-wrap">
-            <Link href="/jerseys" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-retro">
-              ⚽ Retro Jerseys
-            </Link>
-            <Link href="/jerseys" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-club">
-              🏆 Club Jerseys
-            </Link>
-            <Link href="/jerseys" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-country">
-              🌍 Country Jerseys
-            </Link>
-            <Link href="/jerseys" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-nfl">
-              🏈 NFL Jerseys
-            </Link>
-            <Link href="/jerseys" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-basketball">
-              🏀 Basketball Jerseys
-            </Link>
-            <Link href="/jerseys" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-baseball">
-              ⚾ Baseball Jerseys
-            </Link>
-            <Link href="/joggers" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-joggers">
-              👟 Joggers
-            </Link>
-            <Link href="/shorts" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-shorts">
-              🩳 Shorts
-            </Link>
-            <Link href="/face-caps" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-caps">
-              🧢 Face Caps
-            </Link>
-            <Link href="/gloves" className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold" data-testid="quick-cat-gloves">
-              🥊 Gloves
-            </Link>
+            {categories.length > 0
+              ? (categories as Array<{ id: string; label: string; icon: string; href: string }>).map((c) => (
+                  <Link
+                    key={c.id}
+                    href={c.href}
+                    className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold"
+                  >
+                    {c.icon} {c.label}
+                  </Link>
+                ))
+              : /* Static fallback */ [
+                  { label: "⚽ Retro Jerseys",       href: "/jerseys" },
+                  { label: "🏆 Club Jerseys",         href: "/jerseys" },
+                  { label: "🌍 Country Jerseys",      href: "/jerseys" },
+                  { label: "🏈 NFL Jerseys",          href: "/jerseys" },
+                  { label: "🏀 Basketball Jerseys",   href: "/jerseys" },
+                  { label: "⚾ Baseball Jerseys",     href: "/jerseys" },
+                  { label: "👟 Joggers",              href: "/joggers" },
+                  { label: "🩳 Shorts",               href: "/shorts" },
+                  { label: "🧢 Face Caps",            href: "/face-caps" },
+                  { label: "🥊 Gloves",               href: "/gloves" },
+                ].map((c) => (
+                  <Link
+                    key={c.href + c.label}
+                    href={c.href}
+                    className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold"
+                  >
+                    {c.label}
+                  </Link>
+                ))}
           </div>
         </div>
       </section>
@@ -194,12 +188,12 @@ export default function Home() {
               <h2 className="font-display text-4xl text-foreground">Featured Items</h2>
               <p className="text-muted-foreground text-sm mt-1">Our most popular picks</p>
             </div>
-            <Link href="/jerseys" className="flex items-center gap-1 text-[#22c55e] text-sm font-semibold hover:underline" data-testid="see-all-link">
+            <Link href="/jerseys" className="flex items-center gap-1 text-[#22c55e] text-sm font-semibold hover:underline">
               See All <ChevronRight size={16} />
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {FEATURED_PRODUCTS.map((product) => (
+            {(featuredProducts.length > 0 ? featuredProducts : FEATURED_PRODUCTS).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -215,10 +209,8 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {HOW_TO_BUY.map((step, i) => (
-              <div key={i} className="text-center" data-testid={`step-${step.step}`}>
-                <div className="w-12 h-12 rounded-full bg-[#22c55e] text-black font-display text-2xl flex items-center justify-center mx-auto mb-3">
-                  {step.step}
-                </div>
+              <div key={i} className="text-center">
+                <div className="w-12 h-12 rounded-full bg-[#22c55e] text-black font-display text-2xl flex items-center justify-center mx-auto mb-3">{step.step}</div>
                 <h3 className="font-barlow font-700 text-sm uppercase tracking-wide text-white mb-1">{step.title}</h3>
                 <p className="text-gray-400 text-xs leading-relaxed">{step.desc}</p>
               </div>
@@ -240,7 +232,7 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {WHY_CHOOSE.map((item, i) => (
-            <div key={i} className="bg-card border border-card-border rounded-xl p-6 text-center hover:border-[#22c55e] transition-colors group" data-testid={`why-choose-${i}`}>
+            <div key={i} className="bg-card border border-card-border rounded-xl p-6 text-center hover:border-[#22c55e] transition-colors group">
               <div className="text-4xl mb-3">{item.icon}</div>
               <h3 className="font-barlow font-700 text-base uppercase tracking-wide text-foreground mb-2 group-hover:text-[#22c55e] transition-colors">{item.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
@@ -258,7 +250,7 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {REVIEWS.map((review, i) => (
-              <div key={i} className="bg-[#111111] border border-gray-800 rounded-xl p-5 hover:border-[#22c55e]/50 transition-colors" data-testid={`review-${i}`}>
+              <div key={i} className="bg-[#111111] border border-gray-800 rounded-xl p-5 hover:border-[#22c55e]/50 transition-colors">
                 <div className="flex items-center gap-0.5 mb-3">
                   {Array.from({ length: review.rating }).map((_, j) => (
                     <Star key={j} size={13} className="text-[#22c55e] fill-[#22c55e]" />
@@ -266,9 +258,7 @@ export default function Home() {
                 </div>
                 <p className="text-gray-300 text-sm leading-relaxed mb-4">"{review.text}"</p>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#22c55e] flex items-center justify-center text-black font-bold text-sm">
-                    {review.name[0]}
-                  </div>
+                  <div className="w-8 h-8 rounded-full bg-[#22c55e] flex items-center justify-center text-black font-bold text-sm">{review.name[0]}</div>
                   <div>
                     <p className="text-white font-semibold text-sm">{review.name}</p>
                     <p className="text-gray-500 text-xs">{review.location}</p>
@@ -280,24 +270,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Banner */}
+      {/* CTA */}
       <section className="py-14 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="font-display text-5xl text-foreground mb-4">Ready to Order?</h2>
           <p className="text-muted-foreground mb-8">Browse our full collection and order via WhatsApp in minutes.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/jerseys"
-              className="inline-flex items-center justify-center gap-2 bg-[#0a0a0a] hover:bg-[#22c55e] text-white hover:text-black font-bold px-8 py-3.5 rounded-full text-base transition-all"
-              data-testid="cta-shop-jerseys"
-            >
+            <Link href="/jerseys" className="inline-flex items-center justify-center gap-2 bg-[#0a0a0a] hover:bg-[#22c55e] text-white hover:text-black font-bold px-8 py-3.5 rounded-full text-base transition-all">
               ⚽ Shop Jerseys
             </Link>
-            <Link
-              href="/cart"
-              className="inline-flex items-center justify-center gap-2 bg-[#22c55e] hover:bg-[#16a34a] text-black font-bold px-8 py-3.5 rounded-full text-base transition-all"
-              data-testid="cta-view-cart"
-            >
+            <Link href="/cart" className="inline-flex items-center justify-center gap-2 bg-[#22c55e] hover:bg-[#16a34a] text-black font-bold px-8 py-3.5 rounded-full text-base transition-all">
               <ShoppingBag size={16} /> View Cart
             </Link>
           </div>

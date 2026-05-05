@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { Product } from "@/data/products";
 import { formatPrice } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { ColorSwatches } from "@/components/ColorSwatches";
 
 interface ProductCardProps {
   product: Product;
@@ -37,12 +38,15 @@ export function ProductCard({ product }: ProductCardProps) {
         <h3 className="font-semibold text-sm text-foreground leading-tight line-clamp-2 mb-1.5" data-testid={`text-product-name-${product.id}`}>
           {product.name}
         </h3>
-        <p className="text-[#22c55e] font-bold text-base mb-3" data-testid={`text-price-${product.id}`}>
+        <p className="text-[#22c55e] font-bold text-base mb-1" data-testid={`text-price-${product.id}`}>
           {formatPrice(product.price)}
         </p>
+        {product.colors && product.colors.length > 0 && (
+          <ColorSwatches colors={product.colors} />
+        )}
         <button
           onClick={handleAdd}
-          className={`w-full flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-lg transition-all duration-200 ${
+          className={`w-full flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-lg transition-all duration-200 mt-3 ${
             added
               ? "bg-[#16a34a] text-white"
               : "bg-[#0a0a0a] hover:bg-[#22c55e] text-white hover:text-black"
