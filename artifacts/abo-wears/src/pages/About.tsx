@@ -21,7 +21,7 @@ export default function About() {
           </div>
           <div className="space-y-4 text-muted-foreground leading-relaxed">
             <p>
-              Welcome to <strong className="text-foreground">ABO Wears</strong> — your number one stop for quality jerseys and sporty streetwear in Ile-Ife, Nigeria. We specialize in retro jerseys, club football kits, country jerseys, NFL jerseys, basketball jerseys, baseball jerseys, joggers, training shorts, face caps, and gloves.
+              Welcome to <strong className="text-foreground">ABO Wears</strong> — your number one stop for quality jerseys and sporty streetwear in Ile-Ife, Nigeria. We specialize in retro jerseys, club football kits, country jerseys, NFL jerseys, basketball jerseys, baseball jerseys, joggers, training shorts, face caps, and GYM wears.
             </p>
             <p>
               Our mission is simple: bring you the best quality sportswear at prices you can actually afford. Whether you're a football fanatic looking for that classic vintage shirt, a basketball lover hunting for your favourite team's kit, or you just want comfortable everyday sports gear — we've got you covered.

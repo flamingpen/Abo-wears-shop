@@ -9,7 +9,7 @@ const NAV_LINKS = [
   { label: "Joggers", href: "/joggers" },
   { label: "Shorts", href: "/shorts" },
   { label: "Face Caps", href: "/face-caps" },
-  { label: "Gloves", href: "/gloves" },
+  { label: "GYM Wears", href: "/gloves" },
   { label: "About", href: "/about" },
 ];
 
@@ -21,9 +21,10 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-[#0a0a0a] text-white shadow-md">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="font-display text-2xl tracking-widest text-white">ABO</span>
-          <span className="font-display text-2xl tracking-widest text-[#22c55e]">WEARS</span>
+        <Link href="/" className="flex items-center">
+          <img src="/logo.jpg" alt="ABO Wears" className="h-10 w-10 rounded-full object-cover" />
+          <span className="ml-2 font-display text-xl tracking-widest text-white hidden sm:inline">ABO</span>
+          <span className="font-display text-xl tracking-widest text-[#22c55e] hidden sm:inline">WEARS</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-5">

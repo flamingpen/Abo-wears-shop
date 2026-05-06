@@ -9,6 +9,7 @@ const SIZES = [
   { value: "Medium", label: "M", fullLabel: "Medium" },
   { value: "Large", label: "L", fullLabel: "Large" },
   { value: "Extra Large", label: "XL", fullLabel: "Extra Large" },
+  { value: "Double Extra Large", label: "XXL", fullLabel: "Double Extra Large" },
 ];
 
 export default function Cart() {

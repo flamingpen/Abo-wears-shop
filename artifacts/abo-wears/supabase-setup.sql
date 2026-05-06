@@ -73,7 +73,7 @@ INSERT INTO categories (id, label, icon, description, href, sort_order, active) 
   ('joggers',             'Joggers',              '👟', 'Comfortable sporty joggers',                           '/joggers', 7,  true),
   ('shorts',              'Shorts',               '🩳', 'Training & casual shorts',                             '/shorts',  8,  true),
   ('face-caps',           'Face Caps',            '🧢', 'Stylish sports caps',                                  '/face-caps', 9, true),
-  ('gloves',              'Gloves',               '🥊', 'Sports & training gloves',                             '/gloves',  10, true)
+  ('gloves',              'GYM Wears',            '🥊', 'Sports & GYM training gear',                           '/gloves',  10, true)
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================

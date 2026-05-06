@@ -9,11 +9,12 @@ import { useProducts, useCategories } from "@/hooks/useProducts";
 import { trackPageView } from "@/lib/supabase";
 
 const REVIEWS = [
-  { name: "Tunde A.",    location: "Lagos",         text: "Got my Arsenal retro jersey in 2 days. Quality is amazing, looks exactly as pictured. ABO Wears never disappoints!", rating: 5 },
-  { name: "Chiamaka O.", location: "Ibadan",        text: "Ordered joggers and shorts. Great fit, great price. I've already recommended this store to my friends.", rating: 5 },
-  { name: "Emeka R.",    location: "Ile-Ife",       text: "Super Eagles jersey arrived fast and the quality is top notch. Very affordable. Will definitely order again!", rating: 5 },
-  { name: "Fatima B.",   location: "Abuja",         text: "Love the face caps! Got 2 pieces and the delivery was quick. Packaging was neat. Trusted vendor for sure.", rating: 5 },
-  { name: "Seun M.",     location: "Port Harcourt", text: "Man City jersey looks premium. Price is the best I've found anywhere. ABO Wears is the real deal.", rating: 5 },
+  { name: "Tunde A.",    location: "Lagos",    text: "Got my Arsenal retro jersey in 2 days. Quality is amazing, looks exactly as pictured. ABO Wears never disappoints!", rating: 5 },
+  { name: "Chiamaka O.", location: "Ibadan",   text: "Ordered joggers and shorts. Great fit, great price. I've already recommended this store to my friends.", rating: 5 },
+  { name: "Emeka R.",    location: "Ile-Ife",  text: "Super Eagles jersey arrived fast and the quality is top notch. Very affordable. Will definitely order again!", rating: 5 },
+  { name: "Fatima B.",   location: "Illesha",  text: "Love the face caps! Got 2 pieces and the delivery was quick. Packaging was neat. Trusted vendor for sure.", rating: 5 },
+  { name: "Seun M.",     location: "Osogbo",   text: "Man City jersey looks premium. Price is the best I've found anywhere. ABO Wears is the real deal.", rating: 5 },
+  { name: "Biodun K.",   location: "Ekiti",    text: "Placed my order on WhatsApp, got my NFL jersey within days. Great communication and the quality exceeded my expectations!", rating: 5 },
 ];
 
 const WHY_CHOOSE = [
@@ -37,7 +38,7 @@ const HERO_CATEGORIES = [
   { label: "Joggers",   href: "/joggers",   emoji: "👟" },
   { label: "Shorts",    href: "/shorts",    emoji: "🩳" },
   { label: "Face Caps", href: "/face-caps", emoji: "🧢" },
-  { label: "Gloves",    href: "/gloves",    emoji: "🥊" },
+  { label: "GYM Wears", href: "/gloves",    emoji: "🥊" },
 ];
 
 const SHOWCASE = [
@@ -83,7 +84,7 @@ export default function Home() {
             <span className="text-[#22c55e]">@ Prices You'll Love</span>
           </h1>
           <p className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto mb-10 font-sans">
-            Retro classics, club kits, country jerseys, NFL, Basketball & Baseball jerseys, joggers, shorts, face caps & gloves — quality gear delivered to your door.
+            Retro Jerseys, club kits, country jerseys, NFL, Basketball & Baseball jerseys, joggers, shorts, face caps & GYM wears — quality gear delivered to your door.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             {HERO_CATEGORIES.map((cat) => (
@@ -118,33 +119,34 @@ export default function Home() {
       {/* Dynamic Category Nav */}
       <section className="bg-[#111111] py-6 border-y border-gray-800">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="flex overflow-x-auto gap-3 pb-1 scrollbar-none justify-start md:justify-center flex-wrap">
+          <div className="grid grid-cols-2 gap-2.5 max-w-xl mx-auto">
             {categories.length > 0
               ? (categories as Array<{ id: string; label: string; icon: string; href: string }>).map((c) => (
                   <Link
                     key={c.id}
                     href={c.href}
-                    className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold"
+                    className="flex items-center justify-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-xl px-4 py-3 transition-all text-sm font-semibold text-center"
                   >
                     {c.icon} {c.label}
                   </Link>
                 ))
-              : /* Static fallback */ [
-                  { label: "⚽ Retro Jerseys",       href: "/jerseys" },
-                  { label: "🏆 Club Jerseys",         href: "/jerseys" },
-                  { label: "🌍 Country Jerseys",      href: "/jerseys" },
-                  { label: "🏈 NFL Jerseys",          href: "/jerseys" },
-                  { label: "🏀 Basketball Jerseys",   href: "/jerseys" },
-                  { label: "⚾ Baseball Jerseys",     href: "/jerseys" },
-                  { label: "👟 Joggers",              href: "/joggers" },
-                  { label: "🩳 Shorts",               href: "/shorts" },
-                  { label: "🧢 Face Caps",            href: "/face-caps" },
-                  { label: "🥊 Gloves",               href: "/gloves" },
+              : /* Static fallback — arranged 2 per row, paired by type */
+                [
+                  { label: "⚽ Retro Jerseys",      href: "/jerseys" },
+                  { label: "🏆 Club Jerseys",        href: "/jerseys" },
+                  { label: "🌍 Country Jerseys",     href: "/jerseys" },
+                  { label: "🏈 NFL Jerseys",         href: "/jerseys" },
+                  { label: "🏀 Basketball Jerseys",  href: "/jerseys" },
+                  { label: "⚾ Baseball Jerseys",    href: "/jerseys" },
+                  { label: "👟 Joggers",             href: "/joggers" },
+                  { label: "🩳 Shorts",              href: "/shorts" },
+                  { label: "🧢 Face Caps",           href: "/face-caps" },
+                  { label: "🥊 GYM Wears",          href: "/gloves" },
                 ].map((c) => (
                   <Link
                     key={c.href + c.label}
                     href={c.href}
-                    className="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-full px-5 py-2.5 transition-all whitespace-nowrap text-sm font-semibold"
+                    className="flex items-center justify-center gap-2 bg-[#1a1a1a] hover:bg-[#22c55e] hover:text-black text-white border border-gray-700 hover:border-[#22c55e] rounded-xl px-4 py-3 transition-all text-sm font-semibold text-center"
                   >
                     {c.label}
                   </Link>
@@ -156,7 +158,7 @@ export default function Home() {
       {/* Search */}
       <section className="py-8 px-4 max-w-6xl mx-auto">
         <SearchBar
-          placeholder="Search all products — jerseys, gloves, caps and more..."
+          placeholder="Search all products — jerseys, gym wears, caps and more..."
           onSearch={setSearchQuery}
           className="max-w-xl mx-auto"
         />
