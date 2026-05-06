@@ -4,13 +4,14 @@ import type { Product } from "@/data/products";
 export interface CartItem {
   product: Product;
   quantity: number;
+  color?: string;
 }
 
 interface CartContextValue {
   items: CartItem[];
-  addToCart: (product: Product) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  addToCart: (product: Product, color?: string) => void;
+  removeFromCart: (productId: string, color?: string) => void;
+  updateQuantity: (productId: string, quantity: number, color?: string) => void;
   clearCart: () => void;
   total: number;
   itemCount: number;
@@ -19,6 +20,10 @@ interface CartContextValue {
 const CartContext = createContext<CartContextValue | null>(null);
 
 const CART_KEY = "abo-wears-cart";
+
+function sameItem(item: CartItem, productId: string, color?: string) {
+  return item.product.id === productId && item.color === color;
+}
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(() => {
@@ -34,32 +39,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(CART_KEY, JSON.stringify(items));
   }, [items]);
 
-  const addToCart = useCallback((product: Product) => {
+  const addToCart = useCallback((product: Product, color?: string) => {
     setItems((prev) => {
-      const existing = prev.find((i) => i.product.id === product.id);
+      const existing = prev.find((i) => sameItem(i, product.id, color));
       if (existing) {
         return prev.map((i) =>
-          i.product.id === product.id
-            ? { ...i, quantity: i.quantity + 1 }
-            : i
+          sameItem(i, product.id, color) ? { ...i, quantity: i.quantity + 1 } : i
         );
       }
-      return [...prev, { product, quantity: 1 }];
+      return [...prev, { product, quantity: 1, color }];
     });
   }, []);
 
-  const removeFromCart = useCallback((productId: string) => {
-    setItems((prev) => prev.filter((i) => i.product.id !== productId));
+  const removeFromCart = useCallback((productId: string, color?: string) => {
+    setItems((prev) => prev.filter((i) => !sameItem(i, productId, color)));
   }, []);
 
-  const updateQuantity = useCallback((productId: string, quantity: number) => {
+  const updateQuantity = useCallback((productId: string, quantity: number, color?: string) => {
     if (quantity <= 0) {
-      setItems((prev) => prev.filter((i) => i.product.id !== productId));
+      setItems((prev) => prev.filter((i) => !sameItem(i, productId, color)));
     } else {
       setItems((prev) =>
-        prev.map((i) =>
-          i.product.id === productId ? { ...i, quantity } : i
-        )
+        prev.map((i) => sameItem(i, productId, color) ? { ...i, quantity } : i)
       );
     }
   }, []);
@@ -68,17 +69,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems([]);
   }, []);
 
-  const total = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
-
+  const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <CartContext.Provider
-      value={{ items, addToCart, removeFromCart, updateQuantity, clearCart, total, itemCount }}
-    >
+    <CartContext.Provider value={{ items, addToCart, removeFromCart, updateQuantity, clearCart, total, itemCount }}>
       {children}
     </CartContext.Provider>
   );

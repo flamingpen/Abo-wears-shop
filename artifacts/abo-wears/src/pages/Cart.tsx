@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { Trash2, Minus, Plus, ShoppingBag, MessageCircle, ArrowLeft } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { formatPrice, WHATSAPP_NUMBER } from "@/data/products";
+import { getColorHex, isLightColor } from "@/lib/colors";
 
 const SIZES = [
   { value: "Small", label: "S", fullLabel: "Small" },
@@ -23,10 +24,10 @@ export default function Cart() {
     if (items.length === 0) return;
 
     const itemLines = items
-      .map(
-        (item) =>
-          `- ${item.product.name} x${item.quantity} – ${formatPrice(item.product.price * item.quantity)}`
-      )
+      .map((item) => {
+        const colorPart = item.color ? ` [${item.color}]` : "";
+        return `- ${item.product.name}${colorPart} x${item.quantity} – ${formatPrice(item.product.price * item.quantity)}`;
+      })
       .join("\n");
 
     const deliveryLine = address ? `\n\nDelivery Address: ${address}` : "";
@@ -77,7 +78,7 @@ export default function Cart() {
           <div className="lg:col-span-3 space-y-4">
             {items.map((item) => (
               <div
-                key={item.product.id}
+                key={`${item.product.id}-${item.color ?? "none"}`}
                 className="bg-card border border-card-border rounded-xl p-4 flex gap-4"
                 data-testid={`cart-item-${item.product.id}`}
               >
@@ -90,13 +91,25 @@ export default function Cart() {
                   <h3 className="font-semibold text-sm text-foreground leading-tight mb-1 line-clamp-2">
                     {item.product.name}
                   </h3>
+                  {item.color && (
+                    <span
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold px-2 py-0.5 rounded-full mb-1.5"
+                      style={{
+                        backgroundColor: getColorHex(item.color),
+                        color: isLightColor(item.color) ? "#333" : "#fff",
+                      }}
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
+                      {item.color}
+                    </span>
+                  )}
                   <p className="text-[#22c55e] font-bold text-sm mb-3">
                     {formatPrice(item.product.price)}
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                        onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.color)}
                         className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
                         data-testid={`button-decrease-${item.product.id}`}
                       >
@@ -106,7 +119,7 @@ export default function Cart() {
                         {item.quantity}
                       </span>
                       <button
-                        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                        onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.color)}
                         className="w-7 h-7 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
                         data-testid={`button-increase-${item.product.id}`}
                       >
@@ -118,7 +131,7 @@ export default function Cart() {
                         {formatPrice(item.product.price * item.quantity)}
                       </span>
                       <button
-                        onClick={() => removeFromCart(item.product.id)}
+                        onClick={() => removeFromCart(item.product.id, item.color)}
                         className="text-red-400 hover:text-red-500 transition-colors"
                         data-testid={`button-remove-${item.product.id}`}
                       >

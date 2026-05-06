@@ -4,6 +4,7 @@ import type { Product } from "@/data/products";
 import { formatPrice } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import { ColorSwatches } from "@/components/ColorSwatches";
+import { getColorHex, isLightColor } from "@/lib/colors";
 
 interface ProductCardProps {
   product: Product;
@@ -12,12 +13,17 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
   const [added, setAdded] = useState(false);
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(
+    product.colors && product.colors.length > 0 ? product.colors[0] : undefined
+  );
 
   function handleAdd() {
-    addToCart(product);
+    addToCart(product, selectedColor);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   }
+
+  const hasColors = product.colors && product.colors.length > 0;
 
   return (
     <div className="product-card bg-card rounded-xl overflow-hidden border border-card-border group" data-testid={`card-product-${product.id}`}>
@@ -33,20 +39,43 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.badge}
           </span>
         )}
+        {selectedColor && hasColors && (
+          <span
+            className="absolute bottom-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/30 shadow"
+            style={{
+              backgroundColor: getColorHex(selectedColor),
+              color: isLightColor(selectedColor) ? "#333" : "#fff",
+            }}
+          >
+            {selectedColor}
+          </span>
+        )}
       </div>
       <div className="p-3.5">
         <h3 className="font-semibold text-sm text-foreground leading-tight line-clamp-2 mb-1.5" data-testid={`text-product-name-${product.id}`}>
           {product.name}
         </h3>
-        <p className="text-[#22c55e] font-bold text-base mb-1" data-testid={`text-price-${product.id}`}>
+        <p className="text-[#22c55e] font-bold text-base mb-2" data-testid={`text-price-${product.id}`}>
           {formatPrice(product.price)}
         </p>
-        {product.colors && product.colors.length > 0 && (
-          <ColorSwatches colors={product.colors} />
+
+        {hasColors && (
+          <div className="mb-3">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-semibold mb-1.5">
+              Colour — tap to pick
+            </p>
+            <ColorSwatches
+              colors={product.colors!}
+              selected={selectedColor}
+              onSelect={setSelectedColor}
+              size="sm"
+            />
+          </div>
         )}
+
         <button
           onClick={handleAdd}
-          className={`w-full flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-lg transition-all duration-200 mt-3 ${
+          className={`w-full flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-lg transition-all duration-200 ${
             added
               ? "bg-[#16a34a] text-white"
               : "bg-[#0a0a0a] hover:bg-[#22c55e] text-white hover:text-black"
