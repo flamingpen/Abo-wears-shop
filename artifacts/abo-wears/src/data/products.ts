@@ -41,7 +41,7 @@ export const CATEGORIES = [
   { id: "joggers",            label: "Joggers",             icon: "👟", description: "Comfortable sporty joggers" },
   { id: "shorts",             label: "Shorts",              icon: "🩳", description: "Training & casual shorts" },
   { id: "face-caps",          label: "Face Caps",           icon: "🧢", description: "Stylish sports caps" },
-  { id: "gloves",             label: "GYM Wears",            icon: "🥊", description: "Sports & GYM training gear" },
+  { id: "gloves",             label: "GYM Wears",            icon: "🏋️‍♂️", description: "Sports & GYM training gear" },
 ] as const;
 
 // Placeholder image URLs

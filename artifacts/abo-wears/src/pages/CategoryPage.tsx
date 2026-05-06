@@ -38,7 +38,12 @@ export default function CategoryPage({ category }: CategoryPageProps) {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-10">
+      <div className="relative">
+        <div
+          className="pointer-events-none absolute inset-0 bg-center bg-no-repeat opacity-[0.04]"
+          style={{ backgroundImage: "url('/abo-logo-watermark.jpg')", backgroundSize: "40%" }}
+        />
+      <div className="relative max-w-6xl mx-auto px-4 py-10">
         <SearchBar
           placeholder={`Search ${catInfo.label}...`}
           onSearch={setSearchQuery}
@@ -67,6 +72,7 @@ export default function CategoryPage({ category }: CategoryPageProps) {
             ))}
           </div>
         )}
+      </div>
       </div>
     </div>
   );

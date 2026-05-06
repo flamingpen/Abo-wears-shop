@@ -8,8 +8,8 @@ const JERSEY_TABS = [
   { id: "club-jerseys",       label: "Club Jerseys",       emoji: "🏆" },
   { id: "retro-jerseys",      label: "Retro Jerseys",       emoji: "⚽" },
   { id: "country-jerseys",    label: "Country Jerseys",     emoji: "🌍" },
-  { id: "nfl-jerseys",        label: "NFL Jerseys",         emoji: "🏈" },
   { id: "basketball-jerseys", label: "Basketball Jerseys",  emoji: "🏀" },
+  { id: "nfl-jerseys",        label: "NFL Jerseys",         emoji: "🏈" },
   { id: "baseball-jerseys",   label: "Baseball Jerseys",    emoji: "⚾" },
 ] as const;
 
@@ -35,7 +35,7 @@ export default function Jerseys() {
         <div className="max-w-6xl mx-auto">
           <h1 className="font-display text-5xl md:text-6xl text-white mb-2">Jerseys</h1>
           <p className="text-gray-400">
-            Retro Jerseys, club kits, country jerseys, NFL, Basketball & Baseball jerseys
+            Club Kits, Retro Jerseys, Country Jerseys, Basketball, NFL & Baseball Jerseys
           </p>
         </div>
       </div>
@@ -63,7 +63,12 @@ export default function Jerseys() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-10">
+      <div className="relative">
+        <div
+          className="pointer-events-none absolute inset-0 bg-center bg-no-repeat bg-contain opacity-[0.04]"
+          style={{ backgroundImage: "url('/abo-logo-watermark.jpg')", backgroundSize: "40%" }}
+        />
+      <div className="relative max-w-6xl mx-auto px-4 py-10">
         <SearchBar
           placeholder={`Search ${JERSEY_TABS.find((t) => t.id === activeTab)?.label ?? "jerseys"}...`}
           onSearch={setSearchQuery}
@@ -98,6 +103,7 @@ export default function Jerseys() {
             ))}
           </div>
         )}
+      </div>
       </div>
     </div>
   );

@@ -38,7 +38,7 @@ const HERO_CATEGORIES = [
   { label: "Joggers",   href: "/joggers",   emoji: "👟" },
   { label: "Shorts",    href: "/shorts",    emoji: "🩳" },
   { label: "Face Caps", href: "/face-caps", emoji: "🧢" },
-  { label: "GYM Wears", href: "/gloves",    emoji: "🥊" },
+  { label: "GYM Wears", href: "/gloves",    emoji: "🏋️‍♂️" },
 ];
 
 const SHOWCASE = [
@@ -141,7 +141,7 @@ export default function Home() {
                   { label: "👟 Joggers",             href: "/joggers" },
                   { label: "🩳 Shorts",              href: "/shorts" },
                   { label: "🧢 Face Caps",           href: "/face-caps" },
-                  { label: "🥊 GYM Wears",          href: "/gloves" },
+                  { label: "🏋️‍♂️ GYM Wears",         href: "/gloves" },
                 ].map((c) => (
                   <Link
                     key={c.href + c.label}
