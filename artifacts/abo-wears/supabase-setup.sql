@@ -25,10 +25,14 @@ CREATE TABLE IF NOT EXISTS products (
   image TEXT NOT NULL,
   badge TEXT,
   colors TEXT[],
+  color_images JSONB DEFAULT '{}'::jsonb,
   active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ⚠️  If your products table already exists, run this one extra line:
+-- ALTER TABLE products ADD COLUMN IF NOT EXISTS color_images JSONB DEFAULT '{}'::jsonb;
 
 -- 3. PROMOS TABLE
 CREATE TABLE IF NOT EXISTS promos (

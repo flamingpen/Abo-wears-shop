@@ -12,6 +12,7 @@ function mapDbProduct(p: Record<string, unknown>): Product {
     image: p.image as string,
     badge: (p.badge as string) || undefined,
     colors: (p.colors as string[]) || undefined,
+    colorImages: (p.color_images as Record<string, string>) || undefined,
   };
 }
 

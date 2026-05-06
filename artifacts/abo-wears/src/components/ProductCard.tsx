@@ -16,6 +16,25 @@ export function ProductCard({ product }: ProductCardProps) {
   const [selectedColor, setSelectedColor] = useState<string | undefined>(
     product.colors && product.colors.length > 0 ? product.colors[0] : undefined
   );
+  const [fading, setFading] = useState(false);
+
+  const displayImage =
+    (selectedColor && product.colorImages?.[selectedColor]) || product.image;
+
+  function handleColorSelect(color: string) {
+    if (color === selectedColor) return;
+    const nextImage = product.colorImages?.[color] || product.image;
+    const currentImage = (selectedColor && product.colorImages?.[selectedColor]) || product.image;
+    if (nextImage !== currentImage) {
+      setFading(true);
+      setTimeout(() => {
+        setSelectedColor(color);
+        setFading(false);
+      }, 160);
+    } else {
+      setSelectedColor(color);
+    }
+  }
 
   function handleAdd() {
     addToCart(product, selectedColor);
@@ -29,9 +48,9 @@ export function ProductCard({ product }: ProductCardProps) {
     <div className="product-card bg-card rounded-xl overflow-hidden border border-card-border group" data-testid={`card-product-${product.id}`}>
       <div className="relative overflow-hidden aspect-square bg-muted">
         <img
-          src={product.image}
+          src={displayImage}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className={`w-full h-full object-cover group-hover:scale-105 transition-all duration-300 ${fading ? "opacity-0" : "opacity-100"}`}
           loading="lazy"
         />
         {product.badge && (
@@ -67,7 +86,7 @@ export function ProductCard({ product }: ProductCardProps) {
             <ColorSwatches
               colors={product.colors!}
               selected={selectedColor}
-              onSelect={setSelectedColor}
+              onSelect={handleColorSelect}
               size="sm"
             />
           </div>

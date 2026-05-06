@@ -26,6 +26,7 @@ export interface Product {
   image: string;
   badge?: string;
   colors?: string[];
+  colorImages?: Record<string, string>;
 }
 
 export const WHATSAPP_NUMBER = "2348110951313";

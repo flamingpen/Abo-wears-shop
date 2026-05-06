@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAdminProducts, useCategories } from "@/hooks/useProducts";
 import { AVAILABLE_COLORS } from "@/lib/colors";
 import { ColorSwatches } from "@/components/ColorSwatches";
-import { Plus, Pencil, Trash2, X, Check } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Check, Upload, Loader2 } from "lucide-react";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 
 function formatPrice(n: number) {
@@ -19,8 +19,84 @@ const EMPTY_FORM = {
   image: "",
   badge: "",
   colors: [] as string[],
+  colorImages: {} as Record<string, string>,
   active: true,
 };
+
+// Compact per-color image row used inside the modal
+function ColorImageRow({
+  colorName,
+  colorHex,
+  value,
+  onChange,
+}: {
+  colorName: string;
+  colorHex: string;
+  value: string;
+  onChange: (url: string) => void;
+}) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return;
+    if (file.size > 5 * 1024 * 1024) return;
+    setUploading(true);
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+    const path = `products/color-${colorName.toLowerCase()}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage
+      .from("product-images")
+      .upload(path, file, { cacheControl: "3600", upsert: false });
+    if (!error) {
+      const { data } = supabase.storage.from("product-images").getPublicUrl(path);
+      onChange(data.publicUrl);
+    }
+    setUploading(false);
+    if (fileRef.current) fileRef.current.value = "";
+  }
+
+  return (
+    <div className="flex items-center gap-2 py-2 border-b border-gray-800 last:border-0">
+      <span
+        className="w-6 h-6 rounded-full shrink-0 border border-gray-600"
+        style={{ backgroundColor: colorHex }}
+      />
+      <span className="text-white text-xs font-semibold w-14 shrink-0">{colorName}</span>
+      <input
+        type="url"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Paste image URL…"
+        className="flex-1 bg-[#0f0f0f] border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#22c55e] placeholder:text-gray-600"
+      />
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        id={`color-img-${colorName}`}
+        onChange={handleFile}
+      />
+      <label
+        htmlFor={`color-img-${colorName}`}
+        className="shrink-0 flex items-center gap-1 px-2 py-1.5 rounded-lg bg-[#1a1a1a] border border-gray-700 text-gray-400 hover:text-white hover:border-[#22c55e] cursor-pointer transition-colors text-xs"
+      >
+        {uploading ? <Loader2 size={11} className="animate-spin" /> : <Upload size={11} />}
+        {uploading ? "…" : "Upload"}
+      </label>
+      {value && (
+        <img
+          src={value}
+          alt={colorName}
+          className="w-8 h-8 rounded-md object-cover shrink-0 bg-gray-800 border border-gray-700"
+          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+        />
+      )}
+    </div>
+  );
+}
 
 export function ProductsTab() {
   const qc = useQueryClient();
@@ -51,6 +127,7 @@ export function ProductsTab() {
       image: p.image,
       badge: p.badge ?? "",
       colors: p.colors ?? [],
+      colorImages: p.colorImages ?? {},
       active: true,
     });
     setIsEdit(true);
@@ -67,6 +144,13 @@ export function ProductsTab() {
     }));
   }
 
+  function setColorImage(colorName: string, url: string) {
+    setForm((f) => ({
+      ...f,
+      colorImages: { ...f.colorImages, [colorName]: url },
+    }));
+  }
+
   async function handleSave() {
     if (!form.name.trim() || !form.price || !form.category_id || !form.image.trim()) {
       setErr("Name, price, category, and image are required.");
@@ -74,6 +158,13 @@ export function ProductsTab() {
     }
     setSaving(true);
     setErr("");
+
+    // Only save color images that have a non-empty URL
+    const cleanColorImages: Record<string, string> = {};
+    for (const [k, v] of Object.entries(form.colorImages)) {
+      if (v && v.trim()) cleanColorImages[k] = v.trim();
+    }
+
     const payload = {
       name: form.name.trim(),
       price: parseInt(form.price),
@@ -81,6 +172,7 @@ export function ProductsTab() {
       image: form.image.trim(),
       badge: form.badge.trim() || null,
       colors: form.colors.length > 0 ? form.colors : null,
+      color_images: Object.keys(cleanColorImages).length > 0 ? cleanColorImages : null,
       active: form.active,
       updated_at: new Date().toISOString(),
     };
@@ -172,7 +264,14 @@ export function ProductsTab() {
                   <td className="px-4 py-3 text-[#22c55e] font-bold">{formatPrice(p.price)}</td>
                   <td className="px-4 py-3">
                     {p.colors && p.colors.length > 0 ? (
-                      <ColorSwatches colors={p.colors} />
+                      <div className="flex flex-col gap-1">
+                        <ColorSwatches colors={p.colors} />
+                        {p.colorImages && Object.keys(p.colorImages).length > 0 && (
+                          <span className="text-[10px] text-[#22c55e]">
+                            {Object.keys(p.colorImages).length} colour photo{Object.keys(p.colorImages).length > 1 ? "s" : ""}
+                          </span>
+                        )}
+                      </div>
                     ) : (
                       <span className="text-gray-600 text-xs">—</span>
                     )}
@@ -257,7 +356,7 @@ export function ProductsTab() {
                 </div>
               </div>
               <ImageUpload
-                label="Product Image *"
+                label="Main Product Image *"
                 value={form.image}
                 onChange={(url) => setForm((f) => ({ ...f, image: url }))}
                 folder="products"
@@ -271,9 +370,11 @@ export function ProductsTab() {
                   className="w-full bg-[#1a1a1a] border border-gray-700 text-white rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] placeholder:text-gray-600"
                 />
               </div>
+
+              {/* Color Picker */}
               <div>
                 <label className="text-xs font-semibold text-gray-400 uppercase tracking-wide block mb-2">
-                  Available Colors <span className="text-gray-600 normal-case font-normal">(select all that apply)</span>
+                  Available Colours <span className="text-gray-600 normal-case font-normal">(select all that apply)</span>
                 </label>
                 <div className="grid grid-cols-4 gap-2">
                   {AVAILABLE_COLORS.map((c) => {
@@ -303,6 +404,35 @@ export function ProductsTab() {
                   <p className="text-[#22c55e] text-xs mt-2">Selected: {form.colors.join(", ")}</p>
                 )}
               </div>
+
+              {/* Per-colour Image Section — only shown when colours are selected */}
+              {form.colors.length > 0 && (
+                <div className="bg-[#0f0f0f] border border-gray-800 rounded-xl p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <p className="text-white text-xs font-bold uppercase tracking-wide">Colour Photos</p>
+                      <p className="text-gray-500 text-[11px] mt-0.5">
+                        Optional — add a separate photo for each colour so customers see the exact item when they tap a colour.
+                        Leave blank to use the main image above.
+                      </p>
+                    </div>
+                  </div>
+                  <div>
+                    {form.colors.map((colorName) => {
+                      const colorDef = AVAILABLE_COLORS.find((c) => c.name === colorName);
+                      return (
+                        <ColorImageRow
+                          key={colorName}
+                          colorName={colorName}
+                          colorHex={colorDef?.hex ?? "#888"}
+                          value={form.colorImages[colorName] ?? ""}
+                          onChange={(url) => setColorImage(colorName, url)}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {err && (
                 <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-red-400 text-sm">{err}</div>
