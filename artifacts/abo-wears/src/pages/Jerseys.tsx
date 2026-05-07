@@ -66,7 +66,7 @@ export default function Jerseys() {
       <div className="relative">
         <div
           className="pointer-events-none absolute inset-0 bg-center bg-no-repeat bg-contain opacity-[0.12]"
-          style={{ backgroundImage: "url('/abo-logo-watermark.jpg')", backgroundSize: "40%" }}
+          style={{ backgroundImage: "url('/abo-logo-watermark.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}
         />
       <div className="relative max-w-6xl mx-auto px-4 py-10">
         <SearchBar
