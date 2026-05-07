@@ -8,7 +8,7 @@ import { mockupPreviewPlugin } from "./mockupPreviewPlugin";
 const port = process.env.PORT ? Number(process.env.PORT) : 5173;
 const basePath = process.env.BASE_PATH || "/";
 
-export default ({ command }: { command: string }) =>
+export default async ({ command }: { command: string }) =>
   defineConfig({
     base: basePath,
     plugins: [

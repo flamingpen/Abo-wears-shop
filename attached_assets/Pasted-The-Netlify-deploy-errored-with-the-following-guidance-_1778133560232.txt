@@ -1,0 +1,101 @@
+The Netlify deploy errored, with the following guidance provided:
+
+Diagnosis
+
+- The TypeScript typecheck fails with a top-level await error in artifacts/mockup-sandbox/vite.config.ts. See the error in the logs at [line 68](#L68) which references vite.config.ts(22,13). The package run that failed is artifacts/mockup-sandbox (see [line 70](#L70)).
+- The error is TS1308: "'await' expressions are only allowed within async functions and at the top levels of modules." That means the TypeScript compiler settings for this workspace/package do not allow top-level await (module/target settings), or the await is used outside an async function.
+
+You can inspect the exact source location here:
+- vite.config.ts (problem line ~22): https://github.com/flamingpen/Abo-wears-shop/blob/main/artifacts/mockup-sandbox/vite.config.ts#L22
+- package tsconfig: https://github.com/flamingpen/Abo-wears-shop/blob/main/artifacts/mockup-sandbox/tsconfig.json
+
+Solution
+
+Choose one of the two fixes below.
+
+Option A — Enable top-level await in TypeScript (recommended if you intentionally use top-level await)
+1. Verify which tsconfig is used for the mockup-sandbox package (artifacts/mockup-sandbox/tsconfig.json or the root tsconfig it extends).
+2. Edit that tsconfig's compilerOptions to allow top-level await by using an ES module module setting and an appropriate target. For example, update artifacts/mockup-sandbox/tsconfig.json to include:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    ...
+  }
+}
+```
+
+- Commit the change and re-run the build. This tells TypeScript to compile as an ES module where top-level await is permitted.
+
+Option B — Remove top-level await by wrapping code in an async function (no tsconfig changes)
+1. Open artifacts/mockup-sandbox/vite.config.ts and replace the top-level await with an async config factory. For example, if the file currently does something like:
+
+```ts
+const env = await loadEnv(...);
+export default defineConfig({ /* uses env */ });
+```
+
+Change it to:
+
+```ts
+export default defineConfig(async () => {
+  const env = await loadEnv(...);
+  return { /* uses env */ };
+});
+```
+
+2. Save, commit, and re-run the build.
+
+Notes
+- Make sure you edit the tsconfig that TypeScript actually uses for artifacts/mockup-sandbox (see the package tsconfig linked above). If the package extends the root tsconfig, adjust the proper file.
+- After applying either fix, re-run pnpm run build on your CI (Netlify) to confirm typecheck passes.
+
+If you want, tell me which approach you prefer (tsconfig change vs. wrapping in async) and I can prepare the exact patch/PR content.
+
+The relevant error logs are:
+
+Line 58: > pnpm run typecheck:libs && pnpm -r --filter "./artifacts/**" --filter "./scripts" --if-present run typecheck
+Line 59: > workspace@0.0.0 typecheck:libs /opt/build/repo
+Line 60: > tsc --build
+Line 61: Scope: 4 of 9 workspace projects
+Line 62: artifacts/abo-wears typecheck$ tsc -p tsconfig.json --noEmit
+Line 63: artifacts/api-server typecheck$ tsc -p tsconfig.json --noEmit
+Line 64: artifacts/mockup-sandbox typecheck$ tsc -p tsconfig.json --noEmit
+Line 65: artifacts/api-server typecheck: Done
+Line 66: scripts typecheck$ tsc -p tsconfig.json --noEmit
+Line 67: scripts typecheck: Done
+Line 68: artifacts/mockup-sandbox typecheck: vite.config.ts(22,13): error TS1308: 'await' expressions are only allowe
+Line 69: artifacts/mockup-sandbox typecheck: Failed
+Line 70: /opt/build/repo/artifacts/mockup-sandbox:
+Line 71:  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/mockup-sandbox@2.0.0 typecheck: `tsc -p tsconfig.json --
+Line 72: Exit status 2
+Line 73:  ELIFECYCLE  Command failed with exit code 2.
+Line 74:  ELIFECYCLE  Command failed with exit code 2.
+Line 75: ​
+Line 76: "build.command" failed                                        
+Line 77: ────────────────────────────────────────────────────────────────
+Line 78: ​
+Line 79:   Error message
+Line 80:   Command failed with exit code 2: pnpm run build
+Line 81: ​
+Line 82:   Error location
+Line 83:   In Build command from Netlify app:
+Line 84:   pnpm run build
+Line 85: ​
+Line 86:   Resolved config
+Line 87:   build:
+Line 88:     command: pnpm run build
+Line 89:     commandOrigin: ui
+Line 90:     environment:
+Line 91:       - VITE_ADMIN_EMAILS
+Line 92:       - VITE_SUPABASE_ANON_KEY
+Line 93:       - VITE_SUPABASE_URL
+Line 94:     publish: /opt/build/repo/dist
+Line 95:     publishOrigin: ui
+Line 96: Failed during stage 'building site': Build script returned non-zero exit code: 2
+Line 97: Build failed due to a user error: Build script returned non-zero exit code: 2
+Line 98: Failing build: Failed to build site
+Line 99: Finished processing build request in 21.202s
