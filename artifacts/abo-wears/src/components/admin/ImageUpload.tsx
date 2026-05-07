@@ -105,7 +105,6 @@ export function ImageUpload({
             ref={fileRef}
             type="file"
             accept="image/*"
-            capture="environment"
             onChange={handleFile}
             className="hidden"
             id={`img-upload-${label.replace(/\s/g, "-")}`}
