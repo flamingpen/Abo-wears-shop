@@ -13,7 +13,7 @@ export function Footer() {
               <span className="font-display text-2xl tracking-widest text-[#22c55e]">WEARS</span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Your number one destination for quality jerseys, joggers, shorts, GYM wears, and face caps at prices you'll love.
+              Your number one destination for quality Jerseys, Joggers, Shorts, GYM Wears, and Face Caps at prices you'll love.
             </p>
           </div>
 

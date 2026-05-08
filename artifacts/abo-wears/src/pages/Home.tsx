@@ -84,7 +84,7 @@ export default function Home() {
             <span className="text-[#22c55e]">@ Prices You'll Love</span>
           </h1>
           <p className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto mb-10 font-sans">
-            Retro Jerseys, club kits, country jerseys, NFL, Basketball & Baseball jerseys, joggers, shorts, face caps & GYM wears — quality gear delivered to your door.
+            Club Kits, Retro Jerseys, Country Jerseys, NFL, Basketball & Baseball Jerseys, Joggers, Shorts, Face Caps & GYM Wears — quality gear delivered to your door.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             {HERO_CATEGORIES.map((cat) => (
