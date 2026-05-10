@@ -35,7 +35,7 @@ export default function Jerseys() {
         <div className="max-w-6xl mx-auto">
           <h1 className="font-display text-5xl md:text-6xl text-white mb-2">Jerseys</h1>
           <p className="text-gray-400">
-            Club Kits, Retro Jerseys, Country Jerseys, Basketball, NFL & Baseball Jerseys
+            Retro Jerseys, Club Kits, Country Jerseys, NBA, NFL & Baseball Jerseys
           </p>
         </div>
       </div>

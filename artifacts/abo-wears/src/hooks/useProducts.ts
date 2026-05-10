@@ -4,15 +4,26 @@ import { PRODUCTS, CATEGORIES } from "@/data/products";
 import type { Product, Category } from "@/data/products";
 
 function mapDbProduct(p: Record<string, unknown>): Product {
+  const rawColorImages = p.color_images as Record<string, unknown> | null;
+  const colorImages = rawColorImages
+    ? Object.fromEntries(
+        Object.entries(rawColorImages).map(([k, v]) => [
+          k,
+          Array.isArray(v) ? (v as string[]) : [v as string],
+        ])
+      )
+    : undefined;
+  const rawImages = p.images as string[] | null;
   return {
     id: p.id as string,
     name: p.name as string,
     price: p.price as number,
     category: p.category_id as Category,
     image: p.image as string,
+    images: rawImages?.length ? rawImages : undefined,
     badge: (p.badge as string) || undefined,
     colors: (p.colors as string[]) || undefined,
-    colorImages: (p.color_images as Record<string, string>) || undefined,
+    colorImages,
   };
 }
 

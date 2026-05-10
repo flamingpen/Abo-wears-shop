@@ -2,6 +2,23 @@ import { Link } from "wouter";
 import { Phone, MapPin, MessageCircle } from "lucide-react";
 import { WHATSAPP_NUMBER } from "@/data/products";
 
+function FacebookIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  );
+}
+function InstagramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 export function Footer() {
   return (
     <footer className="bg-[#0a0a0a] text-white mt-16">
@@ -69,6 +86,18 @@ export function Footer() {
                   <MessageCircle size={15} />
                   Chat on WhatsApp
                 </a>
+              </li>
+              <li>
+                <div className="flex items-center gap-3 mt-2">
+                  <a href="https://www.facebook.com/share/1NATkUfkcg/" target="_blank" rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-[#22c55e] transition-colors" aria-label="Facebook">
+                    <FacebookIcon />
+                  </a>
+                  <a href="https://www.instagram.com/abowears?igsh=MWdkYTdoZm9ienRubw==" target="_blank" rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-[#22c55e] transition-colors" aria-label="Instagram">
+                    <InstagramIcon />
+                  </a>
+                </div>
               </li>
             </ul>
           </div>

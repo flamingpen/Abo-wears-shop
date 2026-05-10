@@ -34,6 +34,7 @@ export type DbPromo = {
   title: string;
   description: string | null;
   banner_image: string | null;
+  banner_position: string | null;
   active: boolean;
   created_at: string;
   updated_at: string;

@@ -13,7 +13,7 @@ function discount(orig: number, promo: number) {
   return Math.round(((orig - promo) / orig) * 100);
 }
 
-const EMPTY_PROMO = { title: "", description: "", banner_image: "" };
+const EMPTY_PROMO = { title: "", description: "", banner_image: "", banner_pos_x: 50, banner_pos_y: 50 };
 const EMPTY_ITEM = { name: "", image: "", original_price: "", promo_price: "" };
 
 function PromoItemsSection({ promoId }: { promoId: string }) {
@@ -147,7 +147,11 @@ export function PromosTab() {
   }
 
   function openEdit(p: DbPromo) {
-    setForm({ title: p.title, description: p.description ?? "", banner_image: p.banner_image ?? "" });
+    const pos = p.banner_position ?? "50% 50%";
+    const parts = pos.split(" ");
+    const px = parseInt(parts[0]) || 50;
+    const py = parseInt(parts[1]) || 50;
+    setForm({ title: p.title, description: p.description ?? "", banner_image: p.banner_image ?? "", banner_pos_x: px, banner_pos_y: py });
     setIsEdit(true);
     setEditId(p.id);
     setErr("");
@@ -161,6 +165,7 @@ export function PromosTab() {
       title: form.title.trim(),
       description: form.description.trim() || null,
       banner_image: form.banner_image.trim() || null,
+      banner_position: `${form.banner_pos_x}% ${form.banner_pos_y}%`,
       updated_at: new Date().toISOString(),
     };
     let error;
@@ -299,6 +304,65 @@ export function PromosTab() {
                 onChange={(url) => setForm((f) => ({ ...f, banner_image: url }))}
                 folder="promo-banners"
               />
+
+              {form.banner_image && (
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">
+                      Crop / Position Preview
+                    </p>
+                    <p className="text-gray-600 text-[11px] mb-2">
+                      Use the sliders to set which part of the image is visible in the hero section. The green border shows the cropped area.
+                    </p>
+                    <div
+                      className="relative w-full rounded-xl overflow-hidden border-2 border-[#22c55e]"
+                      style={{ aspectRatio: "16/5" }}
+                    >
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          backgroundImage: `url(${form.banner_image})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: `${form.banner_pos_x}% ${form.banner_pos_y}%`,
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black/20" />
+                      <span className="absolute bottom-2 right-2 text-[10px] text-white/70 bg-black/40 px-1.5 py-0.5 rounded font-mono">
+                        Hero Preview
+                      </span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[11px] text-gray-400 block mb-1">
+                        Left ← Horizontal → Right &nbsp;{form.banner_pos_x}%
+                      </label>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={form.banner_pos_x}
+                        onChange={(e) => setForm((f) => ({ ...f, banner_pos_x: parseInt(e.target.value) }))}
+                        className="w-full accent-[#22c55e]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[11px] text-gray-400 block mb-1">
+                        Top ↑ Vertical ↓ Bottom &nbsp;{form.banner_pos_y}%
+                      </label>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={form.banner_pos_y}
+                        onChange={(e) => setForm((f) => ({ ...f, banner_pos_y: parseInt(e.target.value) }))}
+                        className="w-full accent-[#22c55e]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="bg-[#22c55e]/5 border border-[#22c55e]/20 rounded-lg p-3">
                 <p className="text-gray-400 text-xs">
                   💡 After creating the promo, expand it to add items with price slashes. Then toggle it <strong className="text-[#22c55e]">Live</strong> to show the homepage banner.

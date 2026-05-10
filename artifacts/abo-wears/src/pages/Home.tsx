@@ -6,6 +6,7 @@ import { storeImg, arsenalJerseysImg, multiClubJerseysImg, nigeriaJerseyImg } fr
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBar } from "@/components/SearchBar";
 import { useProducts, useCategories } from "@/hooks/useProducts";
+import { useActivePromos } from "@/hooks/usePromos";
 import { trackPageView } from "@/lib/supabase";
 
 const REVIEWS = [
@@ -54,6 +55,8 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const { data: allProducts = PRODUCTS } = useProducts();
   const { data: categories = [] } = useCategories();
+  const { data: activePromos = [] } = useActivePromos();
+  const activePromo = activePromos.find((p) => p.banner_image) ?? null;
 
   useEffect(() => {
     trackPageView("/");
@@ -71,33 +74,87 @@ export default function Home() {
     <div>
       {/* Hero */}
       <section className="relative bg-[#0a0a0a] text-white overflow-hidden min-h-[85vh] flex items-center">
-        <img src={storeImg} alt="ABO Wears store" className="absolute inset-0 w-full h-full object-cover object-center opacity-30" />
+        {/* Background — promo image or store photo */}
+        {activePromo ? (
+          <div
+            className="absolute inset-0 w-full h-full"
+            style={{
+              backgroundImage: `url(${activePromo.banner_image})`,
+              backgroundSize: "cover",
+              backgroundPosition: activePromo.banner_position ?? "50% 50%",
+            }}
+          />
+        ) : (
+          <img src={storeImg} alt="ABO Wears store" className="absolute inset-0 w-full h-full object-cover object-center opacity-30" />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-[#0a0a0a]/30" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/80 via-transparent to-[#0a0a0a]/40" />
+
         <div className="relative w-full max-w-6xl mx-auto px-4 py-20 md:py-24 text-center">
-          <div className="inline-flex items-center gap-2 bg-[#22c55e]/20 border border-[#22c55e]/40 text-[#22c55e] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
-            Now Accepting Orders
-          </div>
+          {activePromo ? (
+            <div className="inline-flex items-center gap-2 bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+              Limited Time Sale
+            </div>
+          ) : (
+            <div className="inline-flex items-center gap-2 bg-[#22c55e]/20 border border-[#22c55e]/40 text-[#22c55e] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
+              Now Accepting Orders
+            </div>
+          )}
+
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-none mb-5">
-            All Things Jersey<br />
-            <span className="text-[#22c55e]">@ Prices You'll Love</span>
+            {activePromo ? (
+              <>
+                {activePromo.title}<br />
+                {activePromo.description && (
+                  <span className="text-[#22c55e] text-4xl md:text-5xl">{activePromo.description}</span>
+                )}
+              </>
+            ) : (
+              <>
+                All Things Jersey<br />
+                <span className="text-[#22c55e]">@ Prices You'll Love</span>
+              </>
+            )}
           </h1>
+
           <p className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto mb-10 font-sans">
-            Club Kits, Retro Jerseys, Country Jerseys, NFL, Basketball & Baseball Jerseys, Joggers, Shorts, Face Caps & GYM Wears — quality gear delivered to your door.
+            {activePromo
+              ? "Special deals available for a limited time. Tap below to see all offers."
+              : "Retro Jerseys, Club Kits, Country Jerseys, NBA, NFL & Baseball Jerseys, Joggers, Shorts, Face Caps & GYM Wears — quality gear delivered to your door."}
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {HERO_CATEGORIES.map((cat) => (
+
+          {activePromo ? (
+            <div className="flex flex-wrap justify-center gap-3">
               <Link
-                key={cat.href}
-                href={cat.href}
-                className="flex items-center gap-2 bg-white/10 hover:bg-[#22c55e] hover:text-black text-white font-bold px-6 py-3.5 rounded-full text-sm md:text-base transition-all duration-200 border border-white/20 hover:border-[#22c55e] backdrop-blur-sm hover:scale-105"
+                href={`/promo/${activePromo.id}`}
+                className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-bold px-8 py-4 rounded-full text-base transition-all duration-200 hover:scale-105 shadow-lg"
               >
-                <span>{cat.emoji}</span>
-                {cat.label}
+                🔥 Shop the Sale
+                <ChevronRight size={18} />
               </Link>
-            ))}
-          </div>
+              <Link
+                href="/jerseys"
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold px-6 py-4 rounded-full text-base transition-all duration-200 border border-white/20 backdrop-blur-sm"
+              >
+                Browse All
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-wrap justify-center gap-3">
+              {HERO_CATEGORIES.map((cat) => (
+                <Link
+                  key={cat.href}
+                  href={cat.href}
+                  className="flex items-center gap-2 bg-white/10 hover:bg-[#22c55e] hover:text-black text-white font-bold px-6 py-3.5 rounded-full text-sm md:text-base transition-all duration-200 border border-white/20 hover:border-[#22c55e] backdrop-blur-sm hover:scale-105"
+                >
+                  <span>{cat.emoji}</span>
+                  {cat.label}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

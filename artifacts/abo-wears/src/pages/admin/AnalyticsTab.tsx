@@ -40,9 +40,25 @@ function useAnalytics(days: Range) {
       }));
 
       // By page
+      const PAGE_LABELS: Record<string, string> = {
+        "/": "Home",
+        "/jerseys": "Jerseys",
+        "/joggers": "Joggers",
+        "/shorts": "Shorts",
+        "/face-caps": "Face Caps",
+        "/gloves": "GYM Wears",
+        "/about": "About",
+        "/cart": "Cart",
+      };
+      const getPageLabel = (p: string) => {
+        if (PAGE_LABELS[p]) return PAGE_LABELS[p];
+        if (p.startsWith("/promo/")) return "Promo Page";
+        return p;
+      };
       const pageMap: Record<string, number> = {};
       for (const v of views) {
-        pageMap[v.page] = (pageMap[v.page] ?? 0) + 1;
+        const label = getPageLabel(v.page);
+        pageMap[label] = (pageMap[label] ?? 0) + 1;
       }
       const byPage = Object.entries(pageMap)
         .sort(([, a], [, b]) => b - a)
