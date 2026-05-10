@@ -83,31 +83,31 @@ export default function Home() {
 
           {/* Promo banner card — shown above headline when a promo is live */}
           {activePromo && (
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-8">
               <Link
                 href={`/promo/${activePromo.id}`}
-                className="inline-flex items-center gap-3 bg-black/60 backdrop-blur-md border border-red-500/50 hover:border-red-500 rounded-2xl p-2 pr-4 transition-all hover:bg-black/70 group max-w-sm w-full sm:w-auto"
+                className="inline-flex items-center gap-4 bg-black/70 backdrop-blur-md border border-red-500/60 hover:border-red-500 rounded-2xl p-3 pr-6 transition-all hover:bg-black/80 hover:scale-[1.02] group max-w-lg w-full sm:w-auto shadow-xl shadow-black/40"
               >
                 {activePromo.banner_image && (
                   <img
                     src={activePromo.banner_image}
                     alt={activePromo.title}
-                    className="w-14 h-14 rounded-xl object-cover shrink-0"
+                    className="w-24 h-24 rounded-xl object-cover shrink-0"
                     style={{ objectPosition: activePromo.banner_position ?? "center" }}
                   />
                 )}
                 <div className="text-left flex-1 min-w-0">
-                  <p className="text-[10px] text-red-400 font-bold uppercase tracking-widest mb-0.5 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse inline-block" />
-                    Limited Sale
+                  <p className="text-xs text-red-400 font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse inline-block" />
+                    🔥 Limited Sale — Tap to Shop
                   </p>
-                  <p className="text-white font-bold text-sm leading-tight line-clamp-1">{activePromo.title}</p>
+                  <p className="text-white font-bold text-lg leading-tight line-clamp-2 mb-1">{activePromo.title}</p>
                   {activePromo.description && (
-                    <p className="text-gray-400 text-xs line-clamp-1">{activePromo.description}</p>
+                    <p className="text-gray-300 text-sm line-clamp-2">{activePromo.description}</p>
                   )}
                 </div>
-                <span className="text-red-400 text-xs font-bold shrink-0 group-hover:translate-x-0.5 transition-transform">
-                  Shop →
+                <span className="text-red-400 text-sm font-bold shrink-0 group-hover:translate-x-1 transition-transform">
+                  →
                 </span>
               </Link>
             </div>
