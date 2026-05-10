@@ -80,11 +80,12 @@ function PromoItemsSection({ promoId }: { promoId: string }) {
 
       <div className="bg-[#1a1a1a] rounded-xl p-4 space-y-3">
         <p className="text-gray-400 text-xs font-semibold uppercase tracking-wide">Add Item to Promo</p>
-        <input
+        <textarea
           value={form.name}
           onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-          placeholder="Product name"
-          className="w-full bg-[#111111] border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] placeholder:text-gray-600"
+          placeholder={"Product name\n(press Enter for a new line)"}
+          rows={3}
+          className="w-full bg-[#111111] border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] placeholder:text-gray-600 resize-none"
         />
         <ImageUpload
           label="Item Image"

@@ -74,7 +74,10 @@ export function useCategories() {
           .eq("active", true)
           .order("sort_order");
         if (error || !data || data.length === 0) throw new Error("fallback");
-        return data;
+        return data.map((c: Record<string, unknown>) => ({
+          ...c,
+          icon: c.id === "gloves" ? "🏋️‍♂️" : c.icon,
+        }));
       } catch {
         return CATEGORIES.map((c, i) => ({
           id: c.id,

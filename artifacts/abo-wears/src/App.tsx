@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/context/CartContext";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { PromoBanner } from "@/components/PromoBanner";
 import Home from "@/pages/Home";
 import Jerseys from "@/pages/Jerseys";
 import CategoryPage from "@/pages/CategoryPage";
@@ -39,7 +38,6 @@ function WhatsAppFAB() {
 function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <PromoBanner />
       <Navbar />
       <main>{children}</main>
       <Footer />

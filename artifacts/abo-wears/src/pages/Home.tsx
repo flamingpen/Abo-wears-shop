@@ -74,87 +74,72 @@ export default function Home() {
     <div>
       {/* Hero */}
       <section className="relative bg-[#0a0a0a] text-white overflow-hidden min-h-[85vh] flex items-center">
-        {/* Background — promo image or store photo */}
-        {activePromo ? (
-          <div
-            className="absolute inset-0 w-full h-full"
-            style={{
-              backgroundImage: `url(${activePromo.banner_image})`,
-              backgroundSize: "cover",
-              backgroundPosition: activePromo.banner_position ?? "50% 50%",
-            }}
-          />
-        ) : (
-          <img src={storeImg} alt="ABO Wears store" className="absolute inset-0 w-full h-full object-cover object-center opacity-30" />
-        )}
+        {/* Background — always the store photo */}
+        <img src={storeImg} alt="ABO Wears store" className="absolute inset-0 w-full h-full object-cover object-center opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-[#0a0a0a]/30" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/80 via-transparent to-[#0a0a0a]/40" />
 
         <div className="relative w-full max-w-6xl mx-auto px-4 py-20 md:py-24 text-center">
-          {activePromo ? (
-            <div className="inline-flex items-center gap-2 bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-              Limited Time Sale
-            </div>
-          ) : (
-            <div className="inline-flex items-center gap-2 bg-[#22c55e]/20 border border-[#22c55e]/40 text-[#22c55e] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
-              Now Accepting Orders
+
+          {/* Promo banner card — shown above headline when a promo is live */}
+          {activePromo && (
+            <div className="flex justify-center mb-6">
+              <Link
+                href={`/promo/${activePromo.id}`}
+                className="inline-flex items-center gap-3 bg-black/60 backdrop-blur-md border border-red-500/50 hover:border-red-500 rounded-2xl p-2 pr-4 transition-all hover:bg-black/70 group max-w-sm w-full sm:w-auto"
+              >
+                {activePromo.banner_image && (
+                  <img
+                    src={activePromo.banner_image}
+                    alt={activePromo.title}
+                    className="w-14 h-14 rounded-xl object-cover shrink-0"
+                    style={{ objectPosition: activePromo.banner_position ?? "center" }}
+                  />
+                )}
+                <div className="text-left flex-1 min-w-0">
+                  <p className="text-[10px] text-red-400 font-bold uppercase tracking-widest mb-0.5 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse inline-block" />
+                    Limited Sale
+                  </p>
+                  <p className="text-white font-bold text-sm leading-tight line-clamp-1">{activePromo.title}</p>
+                  {activePromo.description && (
+                    <p className="text-gray-400 text-xs line-clamp-1">{activePromo.description}</p>
+                  )}
+                </div>
+                <span className="text-red-400 text-xs font-bold shrink-0 group-hover:translate-x-0.5 transition-transform">
+                  Shop →
+                </span>
+              </Link>
             </div>
           )}
 
+          {/* Status pill */}
+          <div className="inline-flex items-center gap-2 bg-[#22c55e]/20 border border-[#22c55e]/40 text-[#22c55e] text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
+            Now Accepting Orders
+          </div>
+
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-none mb-5">
-            {activePromo ? (
-              <>
-                {activePromo.title}<br />
-                {activePromo.description && (
-                  <span className="text-[#22c55e] text-4xl md:text-5xl">{activePromo.description}</span>
-                )}
-              </>
-            ) : (
-              <>
-                All Things Jersey<br />
-                <span className="text-[#22c55e]">@ Prices You'll Love</span>
-              </>
-            )}
+            All Things Jersey<br />
+            <span className="text-[#22c55e]">@ Prices You'll Love</span>
           </h1>
 
           <p className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto mb-10 font-sans">
-            {activePromo
-              ? "Special deals available for a limited time. Tap below to see all offers."
-              : "Retro Jerseys, Club Kits, Country Jerseys, NBA, NFL & Baseball Jerseys, Joggers, Shorts, Face Caps & GYM Wears — quality gear delivered to your door."}
+            Retro Jerseys, Club Kits, Country Jerseys, NBA, NFL &amp; Baseball Jerseys, Joggers, Shorts, Face Caps &amp; GYM Wears — quality gear delivered to your door.
           </p>
 
-          {activePromo ? (
-            <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-3">
+            {HERO_CATEGORIES.map((cat) => (
               <Link
-                href={`/promo/${activePromo.id}`}
-                className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-bold px-8 py-4 rounded-full text-base transition-all duration-200 hover:scale-105 shadow-lg"
+                key={cat.href}
+                href={cat.href}
+                className="flex items-center gap-2 bg-white/10 hover:bg-[#22c55e] hover:text-black text-white font-bold px-6 py-3.5 rounded-full text-sm md:text-base transition-all duration-200 border border-white/20 hover:border-[#22c55e] backdrop-blur-sm hover:scale-105"
               >
-                🔥 Shop the Sale
-                <ChevronRight size={18} />
+                <span>{cat.emoji}</span>
+                {cat.label}
               </Link>
-              <Link
-                href="/jerseys"
-                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold px-6 py-4 rounded-full text-base transition-all duration-200 border border-white/20 backdrop-blur-sm"
-              >
-                Browse All
-              </Link>
-            </div>
-          ) : (
-            <div className="flex flex-wrap justify-center gap-3">
-              {HERO_CATEGORIES.map((cat) => (
-                <Link
-                  key={cat.href}
-                  href={cat.href}
-                  className="flex items-center gap-2 bg-white/10 hover:bg-[#22c55e] hover:text-black text-white font-bold px-6 py-3.5 rounded-full text-sm md:text-base transition-all duration-200 border border-white/20 hover:border-[#22c55e] backdrop-blur-sm hover:scale-105"
-                >
-                  <span>{cat.emoji}</span>
-                  {cat.label}
-                </Link>
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       </section>
 

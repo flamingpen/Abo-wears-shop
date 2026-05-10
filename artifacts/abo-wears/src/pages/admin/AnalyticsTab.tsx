@@ -49,6 +49,10 @@ function useAnalytics(days: Range) {
         "/gloves": "GYM Wears",
         "/about": "About",
         "/cart": "Cart",
+        "/category/gloves": "GYM Wears",
+        "/category/joggers": "Joggers",
+        "/category/shorts": "Shorts",
+        "/category/face-caps": "Face Caps",
       };
       const getPageLabel = (p: string) => {
         if (PAGE_LABELS[p]) return PAGE_LABELS[p];

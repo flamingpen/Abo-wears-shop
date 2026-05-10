@@ -115,7 +115,7 @@ export default function PromoPage() {
                       </div>
                     </div>
                     <div className="p-3.5">
-                      <h3 className="font-semibold text-sm text-foreground line-clamp-2 mb-2">
+                      <h3 className="font-semibold text-sm text-foreground whitespace-pre-line mb-2">
                         {item.name}
                       </h3>
                       <div className="flex items-center gap-2 mb-1">
