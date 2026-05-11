@@ -45,6 +45,8 @@ export type DbPromoProduct = {
   promo_id: string;
   name: string;
   image: string;
+  images: string[] | null;
+  colors: string[] | null;
   original_price: number;
   promo_price: number;
   sort_order: number;

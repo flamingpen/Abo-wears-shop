@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { useAllPromos, usePromoProducts } from "@/hooks/usePromos";
 import { Plus, Pencil, Trash2, X, Tag, ToggleLeft, ToggleRight, ChevronDown, ChevronUp } from "lucide-react";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { AVAILABLE_COLORS, getColorHex, isLightColor } from "@/lib/colors";
 import type { DbPromo } from "@/lib/supabase";
 
 function formatPrice(n: number) {
@@ -14,7 +15,60 @@ function discount(orig: number, promo: number) {
 }
 
 const EMPTY_PROMO = { title: "", description: "", banner_image: "", banner_pos_x: 50, banner_pos_y: 50 };
-const EMPTY_ITEM = { name: "", image: "", original_price: "", promo_price: "" };
+const EMPTY_ITEM = {
+  name: "",
+  img1: "",
+  img2: "",
+  img3: "",
+  colors: [] as string[],
+  original_price: "",
+  promo_price: "",
+};
+
+function ColorPicker({
+  selected,
+  onToggle,
+}: {
+  selected: string[];
+  onToggle: (color: string) => void;
+}) {
+  return (
+    <div>
+      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+        Color Options <span className="text-gray-600 font-normal normal-case">(optional)</span>
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {AVAILABLE_COLORS.map((c) => {
+          const active = selected.includes(c.name);
+          return (
+            <button
+              key={c.name}
+              type="button"
+              title={c.name}
+              onClick={() => onToggle(c.name)}
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-[9px] font-bold transition-all
+                ${active
+                  ? "ring-2 ring-offset-2 ring-[#22c55e] scale-110 shadow-md"
+                  : "ring-1 ring-gray-600 opacity-70 hover:opacity-100 hover:scale-105"
+                }`}
+              style={{
+                backgroundColor: c.hex,
+                color: isLightColor(c.name) ? "#333" : "#fff",
+              }}
+            >
+              {c.letter}
+            </button>
+          );
+        })}
+      </div>
+      {selected.length > 0 && (
+        <p className="text-[#22c55e] text-xs mt-1.5">
+          Selected: {selected.join(", ")}
+        </p>
+      )}
+    </div>
+  );
+}
 
 function PromoItemsSection({ promoId }: { promoId: string }) {
   const qc = useQueryClient();
@@ -23,18 +77,31 @@ function PromoItemsSection({ promoId }: { promoId: string }) {
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
 
+  function toggleColor(color: string) {
+    setForm((f) => ({
+      ...f,
+      colors: f.colors.includes(color)
+        ? f.colors.filter((c) => c !== color)
+        : [...f.colors, color],
+    }));
+  }
+
   async function addItem() {
-    if (!form.name.trim() || !form.image.trim() || !form.original_price || !form.promo_price) {
-      setErr("All fields required."); return;
+    if (!form.name.trim() || !form.img1.trim() || !form.original_price || !form.promo_price) {
+      setErr("Name, at least one image, and both prices are required."); return;
     }
     const op = parseInt(form.original_price);
     const pp = parseInt(form.promo_price);
     if (pp >= op) { setErr("Promo price must be less than original price."); return; }
     setSaving(true);
+
+    const images = [form.img1, form.img2, form.img3].filter(Boolean);
     const { error } = await supabase.from("promo_products").insert({
       promo_id: promoId,
       name: form.name.trim(),
-      image: form.image.trim(),
+      image: images[0],
+      images,
+      colors: form.colors.length > 0 ? form.colors : null,
       original_price: op,
       promo_price: pp,
       sort_order: items.length,
@@ -55,31 +122,63 @@ function PromoItemsSection({ promoId }: { promoId: string }) {
     <div className="mt-4 border-t border-gray-800 pt-4">
       <h4 className="text-white font-semibold text-sm mb-3">Promo Items ({items.length})</h4>
 
+      {/* Existing items */}
       {items.length > 0 && (
         <div className="space-y-2 mb-4">
-          {items.map((item) => (
-            <div key={item.id} className="flex items-center gap-3 bg-[#1a1a1a] rounded-lg p-2.5">
-              <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-md bg-gray-800" />
-              <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-medium line-clamp-1">{item.name}</p>
-                <div className="flex gap-2 items-center">
-                  <span className="text-[#22c55e] text-xs font-bold">{formatPrice(item.promo_price)}</span>
-                  <span className="text-gray-500 text-xs line-through">{formatPrice(item.original_price)}</span>
-                  <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">
-                    -{discount(item.original_price, item.promo_price)}%
-                  </span>
+          {items.map((item) => {
+            const thumb = (item.images && item.images[0]) || item.image;
+            const itemColors = item.colors ?? [];
+            return (
+              <div key={item.id} className="flex items-center gap-3 bg-[#1a1a1a] rounded-lg p-2.5">
+                <div className="flex gap-1 shrink-0">
+                  {(item.images && item.images.filter(Boolean).length > 1
+                    ? item.images.filter(Boolean)
+                    : [thumb]
+                  ).slice(0, 3).map((src, i) => (
+                    <img
+                      key={i}
+                      src={src}
+                      alt=""
+                      className="w-9 h-9 object-cover rounded-md bg-gray-800"
+                    />
+                  ))}
                 </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-sm font-medium line-clamp-1">{item.name}</p>
+                  <div className="flex gap-2 items-center flex-wrap">
+                    <span className="text-[#22c55e] text-xs font-bold">{formatPrice(item.promo_price)}</span>
+                    <span className="text-gray-500 text-xs line-through">{formatPrice(item.original_price)}</span>
+                    <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                      -{discount(item.original_price, item.promo_price)}%
+                    </span>
+                  </div>
+                  {itemColors.length > 0 && (
+                    <div className="flex gap-1 mt-1">
+                      {itemColors.slice(0, 6).map((c) => (
+                        <span
+                          key={c}
+                          title={c}
+                          className="w-3.5 h-3.5 rounded-full border border-gray-600"
+                          style={{ backgroundColor: getColorHex(c) }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <button onClick={() => removeItem(item.id)} className="text-red-400 hover:text-red-500 p-1">
+                  <Trash2 size={13} />
+                </button>
               </div>
-              <button onClick={() => removeItem(item.id)} className="text-red-400 hover:text-red-500 p-1">
-                <Trash2 size={13} />
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
+      {/* Add item form */}
       <div className="bg-[#1a1a1a] rounded-xl p-4 space-y-3">
         <p className="text-gray-400 text-xs font-semibold uppercase tracking-wide">Add Item to Promo</p>
+
+        {/* Name */}
         <textarea
           value={form.name}
           onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -87,12 +186,36 @@ function PromoItemsSection({ promoId }: { promoId: string }) {
           rows={3}
           className="w-full bg-[#111111] border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] placeholder:text-gray-600 resize-none"
         />
-        <ImageUpload
-          label="Item Image"
-          value={form.image}
-          onChange={(url) => setForm((f) => ({ ...f, image: url }))}
-          folder="promo-items"
-        />
+
+        {/* 3 image uploads */}
+        <div className="space-y-2">
+          <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide">
+            Product Images
+          </p>
+          <ImageUpload
+            label="Image 1 (required)"
+            value={form.img1}
+            onChange={(url) => setForm((f) => ({ ...f, img1: url }))}
+            folder="promo-items"
+          />
+          <ImageUpload
+            label="Image 2 (optional)"
+            value={form.img2}
+            onChange={(url) => setForm((f) => ({ ...f, img2: url }))}
+            folder="promo-items"
+          />
+          <ImageUpload
+            label="Image 3 (optional)"
+            value={form.img3}
+            onChange={(url) => setForm((f) => ({ ...f, img3: url }))}
+            folder="promo-items"
+          />
+        </div>
+
+        {/* Color picker */}
+        <ColorPicker selected={form.colors} onToggle={toggleColor} />
+
+        {/* Prices */}
         <div className="grid grid-cols-2 gap-2">
           <input
             type="number"
@@ -109,12 +232,15 @@ function PromoItemsSection({ promoId }: { promoId: string }) {
             className="bg-[#111111] border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] placeholder:text-gray-600"
           />
         </div>
+
         {form.original_price && form.promo_price && parseInt(form.promo_price) < parseInt(form.original_price) && (
           <p className="text-[#22c55e] text-xs">
             💰 {discount(parseInt(form.original_price), parseInt(form.promo_price))}% off — Save {formatPrice(parseInt(form.original_price) - parseInt(form.promo_price))}
           </p>
         )}
+
         {err && <p className="text-red-400 text-xs">{err}</p>}
+
         <button
           onClick={addItem}
           disabled={saving}
@@ -275,7 +401,7 @@ export function PromosTab() {
 
       {open && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-[#111111] border border-gray-800 rounded-2xl w-full max-w-md">
+          <div className="bg-[#111111] border border-gray-800 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-gray-800">
               <h3 className="text-white font-bold text-lg">{isEdit ? "Edit Promo" : "Create Promo"}</h3>
               <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-white"><X size={20} /></button>
@@ -315,7 +441,6 @@ export function PromosTab() {
                     <p className="text-gray-500 text-[11px] mb-2">
                       Use the sliders to shift which part of the image is centred in the promo card. This adjusts focus only — the full image is always shown without cropping.
                     </p>
-                    {/* Card preview — matches the actual 4:3 promo card image area */}
                     <div
                       className="relative w-full max-w-[11rem] mx-auto rounded-xl overflow-hidden border-2 border-[#22c55e] bg-black"
                       style={{ aspectRatio: "4/3" }}
