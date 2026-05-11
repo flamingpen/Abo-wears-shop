@@ -63,10 +63,20 @@ export function useAdminProducts() {
   });
 }
 
+export type CategoryItem = {
+  id: string;
+  label: string;
+  icon: string;
+  description: string;
+  href: string;
+  sort_order: number;
+  active: boolean;
+};
+
 export function useCategories() {
-  return useQuery({
+  return useQuery<CategoryItem[]>({
     queryKey: ["categories"],
-    queryFn: async () => {
+    queryFn: async (): Promise<CategoryItem[]> => {
       try {
         const { data, error } = await supabase
           .from("categories")
@@ -75,8 +85,13 @@ export function useCategories() {
           .order("sort_order");
         if (error || !data || data.length === 0) throw new Error("fallback");
         return data.map((c: Record<string, unknown>) => ({
-          ...c,
-          icon: c.id === "gloves" ? "🏋️‍♂️" : c.icon,
+          id: c.id as string,
+          label: c.label as string,
+          icon: (c.id === "gloves" ? "🏋️‍♂️" : c.icon) as string,
+          description: (c.description ?? "") as string,
+          href: (c.href ?? "") as string,
+          sort_order: (c.sort_order ?? 0) as number,
+          active: (c.active ?? true) as boolean,
         }));
       } catch {
         return CATEGORIES.map((c, i) => ({

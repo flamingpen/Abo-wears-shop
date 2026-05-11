@@ -92,7 +92,7 @@ export function CategoriesTab() {
         <div className="text-gray-400 text-sm py-8 text-center">Loading...</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {(categories as Array<{ id: string; label: string; icon: string; description: string; href: string }>).map((c) => (
+          {categories.map((c) => (
             <div
               key={c.id}
               className="bg-[#1a1a1a] border border-gray-800 rounded-xl p-4 flex items-start justify-between"

@@ -257,7 +257,7 @@ export function ProductsTab() {
         <select value={filterCat} onChange={(e) => setFilterCat(e.target.value)}
           className="bg-[#1a1a1a] border border-gray-700 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#22c55e]">
           <option value="">All Categories</option>
-          {(categories as Array<{ id: string; label: string }>).map((c) => (
+          {categories.map((c) => (
             <option key={c.id} value={c.id}>{c.label}</option>
           ))}
         </select>
@@ -369,7 +369,7 @@ export function ProductsTab() {
                     className="w-full bg-[#1a1a1a] border border-gray-700 text-white rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e]"
                   >
                     <option value="">Select...</option>
-                    {(categories as Array<{ id: string; label: string }>).map((c) => (
+                    {categories.map((c) => (
                       <option key={c.id} value={c.id}>{c.label}</option>
                     ))}
                   </select>

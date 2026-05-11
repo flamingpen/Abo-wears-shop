@@ -174,7 +174,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-2 gap-2.5 max-w-xl mx-auto">
             {categories.length > 0
-              ? (categories as Array<{ id: string; label: string; icon: string; href: string }>).map((c) => (
+              ? categories.map((c) => (
                   <Link
                     key={c.id}
                     href={c.href}
