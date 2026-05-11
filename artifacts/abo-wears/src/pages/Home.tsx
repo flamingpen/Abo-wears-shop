@@ -83,32 +83,43 @@ export default function Home() {
 
           {/* Promo banner card — shown above headline when a promo is live */}
           {activePromo && (
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-8 px-0 sm:px-4">
               <Link
                 href={`/promo/${activePromo.id}`}
-                className="inline-flex items-center gap-4 bg-black/70 backdrop-blur-md border border-red-500/60 hover:border-red-500 rounded-2xl p-3 pr-6 transition-all hover:bg-black/80 hover:scale-[1.02] group max-w-lg w-full sm:w-auto shadow-xl shadow-black/40"
+                className="flex flex-col sm:flex-row items-stretch sm:items-center bg-black/70 backdrop-blur-md border border-red-500/60 hover:border-red-500 rounded-2xl overflow-hidden transition-all hover:bg-black/80 hover:scale-[1.01] group w-full max-w-sm sm:max-w-lg shadow-xl shadow-black/50"
               >
+                {/* Image — full width strip on mobile, fixed sidebar on desktop */}
                 {activePromo.banner_image && (
-                  <img
-                    src={activePromo.banner_image}
-                    alt={activePromo.title}
-                    className="w-24 h-24 rounded-xl object-cover shrink-0"
-                    style={{ objectPosition: activePromo.banner_position ?? "center" }}
-                  />
+                  <div className="w-full sm:w-44 sm:shrink-0 bg-black flex items-center justify-center overflow-hidden"
+                    style={{ aspectRatio: "4/3" }}
+                  >
+                    <img
+                      src={activePromo.banner_image}
+                      alt={activePromo.title}
+                      className="w-full h-full object-contain"
+                      style={{ objectPosition: activePromo.banner_position ?? "center" }}
+                      loading="eager"
+                      decoding="async"
+                    />
+                  </div>
                 )}
-                <div className="text-left flex-1 min-w-0">
-                  <p className="text-xs text-red-400 font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse inline-block" />
-                    🔥 Limited Sale — Tap to Shop
-                  </p>
-                  <p className="text-white font-bold text-lg leading-tight line-clamp-2 mb-1">{activePromo.title}</p>
-                  {activePromo.description && (
-                    <p className="text-gray-300 text-sm line-clamp-2">{activePromo.description}</p>
-                  )}
+
+                {/* Text */}
+                <div className="flex items-center gap-3 flex-1 min-w-0 px-4 py-3 sm:py-4">
+                  <div className="flex-1 min-w-0 text-left">
+                    <p className="text-[11px] text-red-400 font-bold uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse inline-block" />
+                      🔥 Limited Sale
+                    </p>
+                    <p className="text-white font-bold text-base sm:text-lg leading-tight line-clamp-2 mb-0.5">{activePromo.title}</p>
+                    {activePromo.description && (
+                      <p className="text-gray-300 text-xs sm:text-sm line-clamp-2">{activePromo.description}</p>
+                    )}
+                  </div>
+                  <span className="text-red-400 text-sm font-bold shrink-0 group-hover:translate-x-1 transition-transform pr-1">
+                    →
+                  </span>
                 </div>
-                <span className="text-red-400 text-sm font-bold shrink-0 group-hover:translate-x-1 transition-transform">
-                  →
-                </span>
               </Link>
             </div>
           )}

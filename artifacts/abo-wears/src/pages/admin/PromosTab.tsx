@@ -310,33 +310,31 @@ export function PromosTab() {
                 <div className="space-y-3">
                   <div>
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">
-                      Crop / Position Preview
+                      Image Focus / Position
                     </p>
-                    <p className="text-gray-600 text-[11px] mb-2">
-                      Use the sliders to set which part of the image is visible in the hero section. The green border shows the cropped area.
+                    <p className="text-gray-500 text-[11px] mb-2">
+                      Use the sliders to shift which part of the image is centred in the promo card. This adjusts focus only — the full image is always shown without cropping.
                     </p>
+                    {/* Card preview — matches the actual 4:3 promo card image area */}
                     <div
-                      className="relative w-full rounded-xl overflow-hidden border-2 border-[#22c55e]"
-                      style={{ aspectRatio: "16/5" }}
+                      className="relative w-full max-w-[11rem] mx-auto rounded-xl overflow-hidden border-2 border-[#22c55e] bg-black"
+                      style={{ aspectRatio: "4/3" }}
                     >
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          backgroundImage: `url(${form.banner_image})`,
-                          backgroundSize: "cover",
-                          backgroundPosition: `${form.banner_pos_x}% ${form.banner_pos_y}%`,
-                        }}
+                      <img
+                        src={form.banner_image}
+                        alt="Preview"
+                        className="w-full h-full object-contain"
+                        style={{ objectPosition: `${form.banner_pos_x}% ${form.banner_pos_y}%` }}
                       />
-                      <div className="absolute inset-0 bg-black/20" />
-                      <span className="absolute bottom-2 right-2 text-[10px] text-white/70 bg-black/40 px-1.5 py-0.5 rounded font-mono">
-                        Hero Preview
+                      <span className="absolute bottom-1.5 right-1.5 text-[10px] text-white/60 bg-black/50 px-1.5 py-0.5 rounded font-mono">
+                        Card Preview
                       </span>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="text-[11px] text-gray-400 block mb-1">
-                        Left ← Horizontal → Right &nbsp;{form.banner_pos_x}%
+                        ← Horizontal → &nbsp;{form.banner_pos_x}%
                       </label>
                       <input
                         type="range"
@@ -349,7 +347,7 @@ export function PromosTab() {
                     </div>
                     <div>
                       <label className="text-[11px] text-gray-400 block mb-1">
-                        Top ↑ Vertical ↓ Bottom &nbsp;{form.banner_pos_y}%
+                        ↑ Vertical ↓ &nbsp;{form.banner_pos_y}%
                       </label>
                       <input
                         type="range"
@@ -360,6 +358,11 @@ export function PromosTab() {
                         className="w-full accent-[#22c55e]"
                       />
                     </div>
+                  </div>
+                  <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3">
+                    <p className="text-amber-400 text-xs leading-relaxed">
+                      💡 <strong>For best results:</strong> upload a clean promo banner with few words, larger text, and a clear main image. Avoid flyers with lots of small text — they become hard to read on mobile.
+                    </p>
                   </div>
                 </div>
               )}
