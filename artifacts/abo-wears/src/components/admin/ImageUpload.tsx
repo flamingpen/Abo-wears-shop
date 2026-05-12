@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Upload, Link2, Loader2, ImageIcon } from "lucide-react";
+import { resolveImageUrl, isSpecialShareUrl } from "@/lib/resolveImageUrl";
 
 interface ImageUploadProps {
   value: string;
@@ -21,12 +22,12 @@ export function ImageUpload({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [mode, setMode] = useState<"upload" | "url">("upload");
+  const [resolving, setResolving] = useState(false);
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate type and size
     if (!file.type.startsWith("image/")) {
       setError("Please select an image file.");
       return;
@@ -47,7 +48,6 @@ export function ImageUpload({
       .upload(path, file, { cacheControl: "3600", upsert: false });
 
     if (uploadErr) {
-      // If bucket doesn't exist yet, give a helpful message
       if (uploadErr.message.includes("Bucket not found") || uploadErr.message.includes("bucket")) {
         setError('Storage not set up yet. Go to Supabase → Storage → Create bucket "product-images" (public).');
       } else {
@@ -61,8 +61,36 @@ export function ImageUpload({
     onChange(data.publicUrl);
     setUploading(false);
 
-    // Reset file input so same file can be re-selected
     if (fileRef.current) fileRef.current.value = "";
+  }
+
+  async function handleUrlBlur() {
+    if (!value || !isSpecialShareUrl(value)) return;
+    setResolving(true);
+    setError("");
+    const resolved = await resolveImageUrl(value);
+    setResolving(false);
+    if (resolved !== value) {
+      onChange(resolved);
+    } else {
+      setError("Couldn't extract an image from that link. Try right-clicking the image and copying the direct image address.");
+    }
+  }
+
+  async function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    const pasted = e.clipboardData.getData("text").trim();
+    if (!pasted || !isSpecialShareUrl(pasted)) return;
+    e.preventDefault();
+    onChange(pasted);
+    setResolving(true);
+    setError("");
+    const resolved = await resolveImageUrl(pasted);
+    setResolving(false);
+    if (resolved !== pasted) {
+      onChange(resolved);
+    } else {
+      setError("Couldn't extract an image from that link. Try right-clicking the image and copying the direct image address.");
+    }
   }
 
   return (
@@ -71,7 +99,6 @@ export function ImageUpload({
         {label}
       </label>
 
-      {/* Mode toggle */}
       <div className="flex rounded-xl bg-[#0f0f0f] border border-gray-800 p-1 mb-3">
         <button
           type="button"
@@ -147,14 +174,26 @@ export function ImageUpload({
         </div>
       ) : (
         <div>
-          <input
-            type="url"
-            value={value}
-            onChange={(e) => { onChange(e.target.value); setError(""); }}
-            placeholder="https://example.com/image.jpg"
-            className="w-full bg-[#1a1a1a] border border-gray-700 text-white rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] placeholder:text-gray-600"
-          />
-          {value && (
+          <div className="relative">
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => { onChange(e.target.value); setError(""); }}
+              onBlur={handleUrlBlur}
+              onPaste={handlePaste}
+              placeholder="Paste a direct link, Google image link, or Instagram post link"
+              className="w-full bg-[#1a1a1a] border border-gray-700 text-white rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#22c55e] placeholder:text-gray-600 pr-10"
+            />
+            {resolving && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <Loader2 size={14} className="text-[#22c55e] animate-spin" />
+              </div>
+            )}
+          </div>
+          {resolving && (
+            <p className="text-gray-400 text-xs mt-1.5">Extracting image from link...</p>
+          )}
+          {value && !resolving && (
             <img
               src={value}
               alt="Preview"

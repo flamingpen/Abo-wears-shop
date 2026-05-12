@@ -6,6 +6,7 @@ import { AVAILABLE_COLORS } from "@/lib/colors";
 import { ColorSwatches } from "@/components/ColorSwatches";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Plus, Pencil, Trash2, X, Check, Upload, Loader2 } from "lucide-react";
+import { resolveImageUrl, isSpecialShareUrl } from "@/lib/resolveImageUrl";
 
 function formatPrice(n: number) {
   return `₦${Number(n).toLocaleString("en-NG")}`;
@@ -39,6 +40,7 @@ function ColorImageSlot({
 }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [resolving, setResolving] = useState(false);
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -55,16 +57,42 @@ function ColorImageSlot({
     if (fileRef.current) fileRef.current.value = "";
   }
 
+  async function handleUrlBlur() {
+    if (!value || !isSpecialShareUrl(value)) return;
+    setResolving(true);
+    const resolved = await resolveImageUrl(value);
+    setResolving(false);
+    if (resolved !== value) onChange(resolved);
+  }
+
+  async function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    const pasted = e.clipboardData.getData("text").trim();
+    if (!pasted || !isSpecialShareUrl(pasted)) return;
+    e.preventDefault();
+    onChange(pasted);
+    setResolving(true);
+    const resolved = await resolveImageUrl(pasted);
+    setResolving(false);
+    if (resolved !== pasted) onChange(resolved);
+  }
+
   return (
     <div className="flex items-center gap-2 py-1.5">
       <span className="text-gray-500 text-[10px] w-10 shrink-0">{label}</span>
-      <input
-        type="url"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Paste URL…"
-        className="flex-1 bg-[#0f0f0f] border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#22c55e] placeholder:text-gray-600"
-      />
+      <div className="relative flex-1">
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={handleUrlBlur}
+          onPaste={handlePaste}
+          placeholder="Paste URL, Google image link, or Instagram link…"
+          className="w-full bg-[#0f0f0f] border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#22c55e] placeholder:text-gray-600 pr-6"
+        />
+        {resolving && (
+          <Loader2 size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#22c55e] animate-spin" />
+        )}
+      </div>
       <input ref={fileRef} type="file" accept="image/*" className="hidden" id={`color-img-${colorName}-${idx}`} onChange={handleFile} />
       <label
         htmlFor={`color-img-${colorName}-${idx}`}
