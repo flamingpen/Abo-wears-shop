@@ -3,7 +3,10 @@ export function isSpecialShareUrl(url: string): boolean {
   return (
     url.includes("google.com/imgres") ||
     url.includes("google.com/search") ||
-    /instagram\.com\/(p|reel|tv)\//.test(url)
+    /instagram\.com\/(p|reel|tv)\//.test(url) ||
+    /facebook\.com\/(photo|permalink|story|posts|reel|watch|share)/.test(url) ||
+    url.includes("fb.watch") ||
+    url.includes("fb.com/")
   );
 }
 
@@ -22,7 +25,13 @@ export async function resolveImageUrl(raw: string): Promise<string> {
       if (imgurl) return imgurl;
     }
 
-    if (/instagram\.com\/(p|reel|tv)\//.test(trimmed)) {
+    const needsProxy =
+      /instagram\.com\/(p|reel|tv)\//.test(trimmed) ||
+      /facebook\.com\/(photo|permalink|story|posts|reel|watch|share)/.test(trimmed) ||
+      trimmed.includes("fb.watch") ||
+      trimmed.includes("fb.com/");
+
+    if (needsProxy) {
       const resp = await fetch(
         `/api/resolve-image?url=${encodeURIComponent(trimmed)}`,
       );
