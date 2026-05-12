@@ -23,8 +23,8 @@ export function Navbar() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <img src="/logo.jpg" alt="ABO Wears" className="h-14 w-14 rounded-full object-cover" />
-          <span className="ml-2 font-display text-2xl tracking-widest text-white hidden sm:inline">ABO</span>
-          <span className="font-display text-2xl tracking-widest text-[#22c55e] hidden sm:inline">WEARS</span>
+          <span className="ml-2 font-display text-2xl tracking-widest text-white">ABO</span>
+          <span className="font-display text-2xl tracking-widest text-[#22c55e]">WEARS</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-5">
