@@ -3,6 +3,8 @@ export function isSpecialShareUrl(url: string): boolean {
   return (
     url.includes("google.com/imgres") ||
     url.includes("google.com/search") ||
+    url.includes("photos.app.goo.gl") ||
+    url.includes("photos.google.com") ||
     /instagram\.com\/(p|reel|tv)\//.test(url) ||
     /facebook\.com\/(photo|permalink|story|posts|reel|watch|share)/.test(url) ||
     url.includes("fb.watch") ||
@@ -26,6 +28,8 @@ export async function resolveImageUrl(raw: string): Promise<string> {
     }
 
     const needsProxy =
+      trimmed.includes("photos.app.goo.gl") ||
+      trimmed.includes("photos.google.com") ||
       /instagram\.com\/(p|reel|tv)\//.test(trimmed) ||
       /facebook\.com\/(photo|permalink|story|posts|reel|watch|share)/.test(trimmed) ||
       trimmed.includes("fb.watch") ||
