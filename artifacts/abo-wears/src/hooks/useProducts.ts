@@ -73,6 +73,17 @@ export type CategoryItem = {
   active: boolean;
 };
 
+const JERSEY_SUB_IDS = new Set([
+  "club-jerseys", "retro-jerseys", "country-jerseys",
+  "nfl-jerseys", "basketball-jerseys", "baseball-jerseys",
+]);
+
+function categoryHref(id: string): string {
+  if (JERSEY_SUB_IDS.has(id)) return `/jerseys/${id}`;
+  if (id === "gloves") return "/gym-wears";
+  return `/${id}`;
+}
+
 export function useCategories() {
   return useQuery<CategoryItem[]>({
     queryKey: ["categories"],
@@ -89,7 +100,7 @@ export function useCategories() {
           label: c.label as string,
           icon: (c.id === "gloves" ? "🏋️‍♂️" : c.icon) as string,
           description: (c.description ?? "") as string,
-          href: (c.href ?? "") as string,
+          href: categoryHref(c.id as string),
           sort_order: (c.sort_order ?? 0) as number,
           active: (c.active ?? true) as boolean,
         }));
@@ -99,9 +110,7 @@ export function useCategories() {
           label: c.label,
           icon: c.icon,
           description: c.description,
-          href: (c.id === "joggers" || c.id === "shorts" || c.id === "face-caps" || c.id === "gloves")
-            ? `/${c.id}`
-            : "/jerseys",
+          href: categoryHref(c.id),
           sort_order: i,
           active: true,
         }));
