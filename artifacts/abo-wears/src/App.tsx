@@ -7,6 +7,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import Home from "@/pages/Home";
 import Jerseys from "@/pages/Jerseys";
+import JerseyCategory from "@/pages/JerseyCategory";
 import CategoryPage from "@/pages/CategoryPage";
 import Cart from "@/pages/Cart";
 import About from "@/pages/About";
@@ -56,8 +57,23 @@ function Router() {
       <Route path="/">
         {() => <StoreLayout><Home /></StoreLayout>}
       </Route>
-      <Route path="/jerseys/:tab">
-        {({ tab }) => <StoreLayout><Jerseys tab={tab} /></StoreLayout>}
+      <Route path="/jerseys/club-jerseys">
+        {() => <StoreLayout><JerseyCategory category="club-jerseys" /></StoreLayout>}
+      </Route>
+      <Route path="/jerseys/retro-jerseys">
+        {() => <StoreLayout><JerseyCategory category="retro-jerseys" /></StoreLayout>}
+      </Route>
+      <Route path="/jerseys/country-jerseys">
+        {() => <StoreLayout><JerseyCategory category="country-jerseys" /></StoreLayout>}
+      </Route>
+      <Route path="/jerseys/basketball-jerseys">
+        {() => <StoreLayout><JerseyCategory category="basketball-jerseys" /></StoreLayout>}
+      </Route>
+      <Route path="/jerseys/nfl-jerseys">
+        {() => <StoreLayout><JerseyCategory category="nfl-jerseys" /></StoreLayout>}
+      </Route>
+      <Route path="/jerseys/baseball-jerseys">
+        {() => <StoreLayout><JerseyCategory category="baseball-jerseys" /></StoreLayout>}
       </Route>
       <Route path="/jerseys">
         {() => <StoreLayout><Jerseys /></StoreLayout>}
