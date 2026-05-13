@@ -35,17 +35,17 @@ const HOW_TO_BUY = [
 ];
 
 const HERO_CATEGORIES = [
-  { label: "Jerseys",   href: "/jerseys",   emoji: "⚽" },
-  { label: "Joggers",   href: "/joggers",   emoji: "👟" },
-  { label: "Shorts",    href: "/shorts",    emoji: "🩳" },
-  { label: "Face Caps", href: "/face-caps", emoji: "🧢" },
-  { label: "GYM Wears", href: "/gloves",    emoji: "🏋️‍♂️" },
+  { label: "Jerseys",   href: "/jerseys",    emoji: "⚽" },
+  { label: "Joggers",   href: "/joggers",    emoji: "👟" },
+  { label: "Shorts",    href: "/shorts",     emoji: "🩳" },
+  { label: "Face Caps", href: "/face-caps",  emoji: "🧢" },
+  { label: "GYM Wears", href: "/gym-wears",  emoji: "🏋️‍♂️" },
 ];
 
 const SHOWCASE = [
-  { img: arsenalJerseysImg,    label: "Club Jerseys",        href: "/jerseys" },
-  { img: multiClubJerseysImg,  label: "All Teams Available", href: "/jerseys" },
-  { img: nigeriaJerseyImg,     label: "Country Jerseys",     href: "/jerseys" },
+  { img: arsenalJerseysImg,    label: "Club Jerseys",        href: "/jerseys?tab=club-jerseys" },
+  { img: multiClubJerseysImg,  label: "All Teams Available", href: "/jerseys?tab=club-jerseys" },
+  { img: nigeriaJerseyImg,     label: "Country Jerseys",     href: "/jerseys?tab=country-jerseys" },
   { img: storeImg,             label: "Browse Full Store",   href: "/jerseys" },
 ];
 
@@ -185,16 +185,16 @@ export default function Home() {
                 ))
               : /* Static fallback — arranged 2 per row, paired by type */
                 [
-                  { label: "⚽ Retro Jerseys",      href: "/jerseys" },
-                  { label: "🏆 Club Jerseys",        href: "/jerseys" },
-                  { label: "🌍 Country Jerseys",     href: "/jerseys" },
-                  { label: "🏈 NFL Jerseys",         href: "/jerseys" },
-                  { label: "🏀 Basketball Jerseys",  href: "/jerseys" },
-                  { label: "⚾ Baseball Jerseys",    href: "/jerseys" },
+                  { label: "⚽ Retro Jerseys",      href: "/jerseys?tab=retro-jerseys" },
+                  { label: "🏆 Club Jerseys",        href: "/jerseys?tab=club-jerseys" },
+                  { label: "🌍 Country Jerseys",     href: "/jerseys?tab=country-jerseys" },
+                  { label: "🏈 NFL Jerseys",         href: "/jerseys?tab=nfl-jerseys" },
+                  { label: "🏀 Basketball Jerseys",  href: "/jerseys?tab=basketball-jerseys" },
+                  { label: "⚾ Baseball Jerseys",    href: "/jerseys?tab=baseball-jerseys" },
                   { label: "👟 Joggers",             href: "/joggers" },
                   { label: "🩳 Shorts",              href: "/shorts" },
                   { label: "🧢 Face Caps",           href: "/face-caps" },
-                  { label: "🏋️‍♂️ GYM Wears",         href: "/gloves" },
+                  { label: "🏋️‍♂️ GYM Wears",         href: "/gym-wears" },
                 ].map((c) => (
                   <Link
                     key={c.href + c.label}
