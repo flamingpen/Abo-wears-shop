@@ -43,9 +43,9 @@ const HERO_CATEGORIES = [
 ];
 
 const SHOWCASE = [
-  { img: arsenalJerseysImg,    label: "Club Jerseys",        href: "/jerseys?tab=club-jerseys" },
-  { img: multiClubJerseysImg,  label: "All Teams Available", href: "/jerseys?tab=club-jerseys" },
-  { img: nigeriaJerseyImg,     label: "Country Jerseys",     href: "/jerseys?tab=country-jerseys" },
+  { img: arsenalJerseysImg,    label: "Club Jerseys",        href: "/jerseys/club-jerseys" },
+  { img: multiClubJerseysImg,  label: "All Teams Available", href: "/jerseys/club-jerseys" },
+  { img: nigeriaJerseyImg,     label: "Country Jerseys",     href: "/jerseys/country-jerseys" },
   { img: storeImg,             label: "Browse Full Store",   href: "/jerseys" },
 ];
 
@@ -185,12 +185,12 @@ export default function Home() {
                 ))
               : /* Static fallback — arranged 2 per row, paired by type */
                 [
-                  { label: "⚽ Retro Jerseys",      href: "/jerseys?tab=retro-jerseys" },
-                  { label: "🏆 Club Jerseys",        href: "/jerseys?tab=club-jerseys" },
-                  { label: "🌍 Country Jerseys",     href: "/jerseys?tab=country-jerseys" },
-                  { label: "🏈 NFL Jerseys",         href: "/jerseys?tab=nfl-jerseys" },
-                  { label: "🏀 Basketball Jerseys",  href: "/jerseys?tab=basketball-jerseys" },
-                  { label: "⚾ Baseball Jerseys",    href: "/jerseys?tab=baseball-jerseys" },
+                  { label: "⚽ Retro Jerseys",      href: "/jerseys/retro-jerseys" },
+                  { label: "🏆 Club Jerseys",        href: "/jerseys/club-jerseys" },
+                  { label: "🌍 Country Jerseys",     href: "/jerseys/country-jerseys" },
+                  { label: "🏈 NFL Jerseys",         href: "/jerseys/nfl-jerseys" },
+                  { label: "🏀 Basketball Jerseys",  href: "/jerseys/basketball-jerseys" },
+                  { label: "⚾ Baseball Jerseys",    href: "/jerseys/baseball-jerseys" },
                   { label: "👟 Joggers",             href: "/joggers" },
                   { label: "🩳 Shorts",              href: "/shorts" },
                   { label: "🧢 Face Caps",           href: "/face-caps" },

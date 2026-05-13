@@ -4,12 +4,12 @@ import { ShoppingCart, Menu, X, ChevronDown } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 const JERSEY_SUB = [
-  { label: "Club Jerseys",        emoji: "🏆", href: "/jerseys?tab=club-jerseys" },
-  { label: "Retro Jerseys",       emoji: "⚽", href: "/jerseys?tab=retro-jerseys" },
-  { label: "Country Jerseys",     emoji: "🌍", href: "/jerseys?tab=country-jerseys" },
-  { label: "Basketball Jerseys",  emoji: "🏀", href: "/jerseys?tab=basketball-jerseys" },
-  { label: "NFL Jerseys",         emoji: "🏈", href: "/jerseys?tab=nfl-jerseys" },
-  { label: "Baseball Jerseys",    emoji: "⚾", href: "/jerseys?tab=baseball-jerseys" },
+  { label: "Club Jerseys",        emoji: "🏆", href: "/jerseys/club-jerseys" },
+  { label: "Retro Jerseys",       emoji: "⚽", href: "/jerseys/retro-jerseys" },
+  { label: "Country Jerseys",     emoji: "🌍", href: "/jerseys/country-jerseys" },
+  { label: "Basketball Jerseys",  emoji: "🏀", href: "/jerseys/basketball-jerseys" },
+  { label: "NFL Jerseys",         emoji: "🏈", href: "/jerseys/nfl-jerseys" },
+  { label: "Baseball Jerseys",    emoji: "⚾", href: "/jerseys/baseball-jerseys" },
 ];
 
 const SIDE_LINKS = [

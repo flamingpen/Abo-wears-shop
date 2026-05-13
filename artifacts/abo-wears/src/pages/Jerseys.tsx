@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useLocation } from "wouter";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBar } from "@/components/SearchBar";
 import { useProducts } from "@/hooks/useProducts";
-import { trackPageView } from "@/lib/supabase";
 
 const JERSEY_TABS = [
   { id: "club-jerseys",       label: "Club Jerseys",       emoji: "🏆" },
@@ -15,31 +15,28 @@ const JERSEY_TABS = [
 
 type JerseyTab = typeof JERSEY_TABS[number]["id"];
 
-const VALID_TABS = JERSEY_TABS.map((t) => t.id) as readonly string[];
+const VALID_TABS = new Set<string>(JERSEY_TABS.map((t) => t.id));
 
-function readTabFromURL(): JerseyTab {
-  const params = new URLSearchParams(window.location.search);
-  const tab = params.get("tab");
-  if (tab && VALID_TABS.includes(tab)) return tab as JerseyTab;
+function toValidTab(raw: string | undefined): JerseyTab {
+  if (raw && VALID_TABS.has(raw)) return raw as JerseyTab;
   return "club-jerseys";
 }
 
-export default function Jerseys() {
-  const [activeTab, setActiveTab] = useState<JerseyTab>(readTabFromURL);
+interface Props {
+  tab?: string;
+}
+
+export default function Jerseys({ tab: tabProp }: Props) {
+  const [, navigate] = useLocation();
+  const [activeTab, setActiveTab] = useState<JerseyTab>(toValidTab(tabProp));
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: tabProducts = [], isLoading } = useProducts(activeTab);
 
-  useEffect(() => {
-    trackPageView("/jerseys");
-  }, []);
-
   function handleTabChange(tab: JerseyTab) {
     setActiveTab(tab);
     setSearchQuery("");
-    const url = new URL(window.location.href);
-    url.searchParams.set("tab", tab);
-    history.replaceState(null, "", url.toString());
+    navigate(`/jerseys/${tab}`);
   }
 
   const products = searchQuery.trim()
@@ -85,42 +82,42 @@ export default function Jerseys() {
           className="pointer-events-none absolute inset-0 opacity-[0.08]"
           style={{ backgroundImage: "url('/abo-logo-watermark.jpg')", backgroundSize: "220px 220px", backgroundRepeat: "repeat" }}
         />
-      <div className="relative max-w-6xl mx-auto px-4 py-10">
-        <SearchBar
-          placeholder={`Search ${JERSEY_TABS.find((t) => t.id === activeTab)?.label ?? "jerseys"}...`}
-          onSearch={setSearchQuery}
-          className="mb-6 max-w-md"
-        />
+        <div className="relative max-w-6xl mx-auto px-4 py-10">
+          <SearchBar
+            placeholder={`Search ${JERSEY_TABS.find((t) => t.id === activeTab)?.label ?? "jerseys"}...`}
+            onSearch={setSearchQuery}
+            className="mb-6 max-w-md"
+          />
 
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-muted-foreground text-sm">
-            {isLoading ? "Loading..." : `${products.length} product${products.length !== 1 ? "s" : ""} in `}
-            <span className="text-foreground font-semibold">
-              {JERSEY_TABS.find((t) => t.id === activeTab)?.label}
-            </span>
-            {searchQuery && <span className="text-[#22c55e]"> matching "{searchQuery}"</span>}
-          </p>
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-muted-foreground text-sm">
+              {isLoading ? "Loading..." : `${products.length} product${products.length !== 1 ? "s" : ""} in `}
+              <span className="text-foreground font-semibold">
+                {JERSEY_TABS.find((t) => t.id === activeTab)?.label}
+              </span>
+              {searchQuery && <span className="text-[#22c55e]"> matching "{searchQuery}"</span>}
+            </p>
+          </div>
+
+          {isLoading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="bg-muted rounded-xl aspect-square animate-pulse" />
+              ))}
+            </div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-16 text-muted-foreground">
+              <p className="text-lg font-semibold mb-2">No products found</p>
+              <p className="text-sm">Try a different search term</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
-
-        {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-muted rounded-xl aspect-square animate-pulse" />
-            ))}
-          </div>
-        ) : products.length === 0 ? (
-          <div className="text-center py-16 text-muted-foreground">
-            <p className="text-lg font-semibold mb-2">No products found</p>
-            <p className="text-sm">Try a different search term</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
-      </div>
       </div>
     </div>
   );

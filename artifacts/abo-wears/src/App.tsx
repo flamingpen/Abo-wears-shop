@@ -56,6 +56,9 @@ function Router() {
       <Route path="/">
         {() => <StoreLayout><Home /></StoreLayout>}
       </Route>
+      <Route path="/jerseys/:tab">
+        {({ tab }) => <StoreLayout><Jerseys tab={tab} /></StoreLayout>}
+      </Route>
       <Route path="/jerseys">
         {() => <StoreLayout><Jerseys /></StoreLayout>}
       </Route>
