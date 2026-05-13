@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useSearch, useLocation } from "wouter";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBar } from "@/components/SearchBar";
 import { useProducts } from "@/hooks/useProducts";
@@ -18,36 +17,30 @@ type JerseyTab = typeof JERSEY_TABS[number]["id"];
 
 const VALID_TABS = JERSEY_TABS.map((t) => t.id) as readonly string[];
 
-function getTabFromSearch(search: string): JerseyTab {
-  const params = new URLSearchParams(search);
+function readTabFromURL(): JerseyTab {
+  const params = new URLSearchParams(window.location.search);
   const tab = params.get("tab");
   if (tab && VALID_TABS.includes(tab)) return tab as JerseyTab;
   return "club-jerseys";
 }
 
 export default function Jerseys() {
-  const search = useSearch();
-  const [, navigate] = useLocation();
-
-  const initialTab = getTabFromSearch(search);
-  const [activeTab, setActiveTab] = useState<JerseyTab>(initialTab);
+  const [activeTab, setActiveTab] = useState<JerseyTab>(readTabFromURL);
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    const tab = getTabFromSearch(search);
-    setActiveTab(tab);
-    setSearchQuery("");
-  }, [search]);
-
-  function handleTabChange(tab: JerseyTab) {
-    navigate(`/jerseys?tab=${tab}`);
-  }
 
   const { data: tabProducts = [], isLoading } = useProducts(activeTab);
 
   useEffect(() => {
     trackPageView("/jerseys");
   }, []);
+
+  function handleTabChange(tab: JerseyTab) {
+    setActiveTab(tab);
+    setSearchQuery("");
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", tab);
+    history.replaceState(null, "", url.toString());
+  }
 
   const products = searchQuery.trim()
     ? tabProducts.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
