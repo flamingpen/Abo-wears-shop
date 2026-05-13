@@ -71,6 +71,9 @@ function Router() {
       <Route path="/gloves">
         {() => <StoreLayout><CategoryPage category="gloves" /></StoreLayout>}
       </Route>
+      <Route path="/gym-wears">
+        {() => <StoreLayout><CategoryPage category="gym-wears" /></StoreLayout>}
+      </Route>
       <Route path="/category/:id">
         {({ id }) => <StoreLayout><CategoryPage category={id as never} /></StoreLayout>}
       </Route>

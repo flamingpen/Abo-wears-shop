@@ -39,16 +39,16 @@ export function Footer() {
             <ul className="space-y-2">
               {[
                 { label: "Home", href: "/" },
-                { label: "Retro Jerseys", href: "/jerseys" },
-                { label: "Club Jerseys", href: "/jerseys" },
-                { label: "Country Jerseys", href: "/jerseys" },
-                { label: "NFL Jerseys", href: "/jerseys" },
-                { label: "Basketball Jerseys", href: "/jerseys" },
-                { label: "Baseball Jerseys", href: "/jerseys" },
+                { label: "Retro Jerseys", href: "/jerseys?tab=retro-jerseys" },
+                { label: "Club Jerseys", href: "/jerseys?tab=club-jerseys" },
+                { label: "Country Jerseys", href: "/jerseys?tab=country-jerseys" },
+                { label: "NFL Jerseys", href: "/jerseys?tab=nfl-jerseys" },
+                { label: "Basketball Jerseys", href: "/jerseys?tab=basketball-jerseys" },
+                { label: "Baseball Jerseys", href: "/jerseys?tab=baseball-jerseys" },
                 { label: "Joggers", href: "/joggers" },
                 { label: "Shorts", href: "/shorts" },
                 { label: "Face Caps", href: "/face-caps" },
-                { label: "GYM Wears", href: "/gloves" },
+                { label: "GYM Wears", href: "/gym-wears" },
                 { label: "About Us", href: "/about" },
               ].map((link) => (
                 <li key={link.label}>

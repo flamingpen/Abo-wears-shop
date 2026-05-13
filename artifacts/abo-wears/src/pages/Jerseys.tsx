@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearch, useLocation } from "wouter";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBar } from "@/components/SearchBar";
 import { useProducts } from "@/hooks/useProducts";
@@ -15,9 +16,32 @@ const JERSEY_TABS = [
 
 type JerseyTab = typeof JERSEY_TABS[number]["id"];
 
+const VALID_TABS = JERSEY_TABS.map((t) => t.id) as readonly string[];
+
+function getTabFromSearch(search: string): JerseyTab {
+  const params = new URLSearchParams(search);
+  const tab = params.get("tab");
+  if (tab && VALID_TABS.includes(tab)) return tab as JerseyTab;
+  return "club-jerseys";
+}
+
 export default function Jerseys() {
-  const [activeTab, setActiveTab] = useState<JerseyTab>("club-jerseys");
+  const search = useSearch();
+  const [, navigate] = useLocation();
+
+  const initialTab = getTabFromSearch(search);
+  const [activeTab, setActiveTab] = useState<JerseyTab>(initialTab);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const tab = getTabFromSearch(search);
+    setActiveTab(tab);
+    setSearchQuery("");
+  }, [search]);
+
+  function handleTabChange(tab: JerseyTab) {
+    navigate(`/jerseys?tab=${tab}`);
+  }
 
   const { data: tabProducts = [], isLoading } = useProducts(activeTab);
 
@@ -47,7 +71,7 @@ export default function Jerseys() {
             {JERSEY_TABS.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => { setActiveTab(tab.id); setSearchQuery(""); }}
+                onClick={() => handleTabChange(tab.id)}
                 className={`whitespace-nowrap font-barlow font-600 text-sm uppercase tracking-wide px-4 py-2.5 rounded-lg transition-all flex items-center gap-1.5 ${
                   activeTab === tab.id
                     ? "bg-[#22c55e] text-black"
