@@ -19,19 +19,6 @@ import { WHATSAPP_NUMBER } from "@/data/products";
 
 const queryClient = new QueryClient();
 
-function PhoneCallFAB() {
-  return (
-    <a
-      href="tel:08133423539"
-      className="fixed bottom-24 right-5 z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-xl transition-transform hover:scale-110 active:scale-95 bg-[#1d4ed8]"
-      aria-label="Call ABO Wears"
-    >
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.01 21 3 13.99 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.58a1 1 0 01-.24 1.01l-2.21 2.2z"/>
-      </svg>
-    </a>
-  );
-}
 
 function WhatsAppFAB() {
   return (
@@ -57,7 +44,6 @@ function StoreLayout({ children }: { children: React.ReactNode }) {
       <Navbar />
       <main>{children}</main>
       <Footer />
-      <PhoneCallFAB />
       <WhatsAppFAB />
     </>
   );

@@ -64,10 +64,16 @@ export default function About() {
                 <p className="font-semibold text-sm text-foreground mb-0.5">Phone Number</p>
                 <a
                   href="tel:+2348110951313"
-                  className="text-[#22c55e] hover:underline text-sm"
+                  className="text-[#22c55e] hover:underline text-sm block"
                   data-testid="contact-phone"
                 >
                   08110951313
+                </a>
+                <a
+                  href="tel:+2348133423539"
+                  className="text-[#22c55e] hover:underline text-sm block"
+                >
+                  08133423539
                 </a>
               </div>
             </div>
