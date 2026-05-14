@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
+import { ChevronDown } from "lucide-react";
 import { PRODUCTS, formatPrice } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBar } from "@/components/SearchBar";
@@ -12,6 +13,15 @@ const JERSEY_CATEGORIES = [
   "basketball-jerseys",
   "nfl-jerseys",
   "baseball-jerseys",
+];
+
+const JERSEY_SUB_TABS = [
+  { id: "club-jerseys",       label: "Club",       emoji: "🏆" },
+  { id: "retro-jerseys",      label: "Retro",      emoji: "⚽" },
+  { id: "country-jerseys",    label: "Country",    emoji: "🌍" },
+  { id: "basketball-jerseys", label: "Basketball", emoji: "🏀" },
+  { id: "nfl-jerseys",        label: "NFL",        emoji: "🏈" },
+  { id: "baseball-jerseys",   label: "Baseball",   emoji: "⚾" },
 ];
 
 type Tab = "all" | "jerseys" | "joggers" | "shorts" | "face-caps" | "gym-wears";
@@ -35,6 +45,7 @@ function filterByTab(tab: Tab) {
 export default function AllProducts() {
   const [activeTab, setActiveTab] = useState<Tab>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [jerseyExpanded, setJerseyExpanded] = useState(false);
   const tabBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,6 +58,11 @@ export default function AllProducts() {
     : byTab;
 
   function handleTabClick(id: Tab) {
+    if (id === "jerseys") {
+      setJerseyExpanded((v) => !v);
+    } else {
+      setJerseyExpanded(false);
+    }
     setActiveTab(id);
     setSearchQuery("");
   }
@@ -75,9 +91,31 @@ export default function AllProducts() {
             >
               <span>{tab.emoji}</span>
               {tab.label}
+              {tab.id === "jerseys" && (
+                <ChevronDown
+                  size={13}
+                  className={`transition-transform ${jerseyExpanded ? "rotate-180" : ""}`}
+                />
+              )}
             </button>
           ))}
         </div>
+
+        {/* Jersey sub-tabs row — expands when Jerseys is clicked */}
+        {jerseyExpanded && (
+          <div className="max-w-6xl mx-auto px-4 flex gap-1 overflow-x-auto no-scrollbar pb-2">
+            {JERSEY_SUB_TABS.map((sub) => (
+              <Link
+                key={sub.id}
+                href={`/jerseys/${sub.id}`}
+                className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-[#f0fdf4] text-[#16a34a] border border-[#bbf7d0] hover:bg-[#22c55e] hover:text-white transition-all"
+              >
+                <span>{sub.emoji}</span>
+                {sub.label}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="relative">
