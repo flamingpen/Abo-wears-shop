@@ -1,19 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { ChevronDown } from "lucide-react";
-import { PRODUCTS, formatPrice } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBar } from "@/components/SearchBar";
+import { useProducts } from "@/hooks/useProducts";
 import { trackPageView } from "@/lib/supabase";
+import type { Product } from "@/data/products";
 
-const JERSEY_CATEGORIES = [
+const JERSEY_CATEGORIES = new Set([
   "retro-jerseys",
   "club-jerseys",
   "country-jerseys",
   "basketball-jerseys",
   "nfl-jerseys",
   "baseball-jerseys",
-];
+]);
 
 const JERSEY_SUB_TABS = [
   { id: "club-jerseys",       label: "Club",       emoji: "🏆" },
@@ -35,11 +36,11 @@ const TABS: { id: Tab; label: string; emoji: string }[] = [
   { id: "gym-wears", label: "Gym Wears",    emoji: "🥊" },
 ];
 
-function filterByTab(tab: Tab) {
-  if (tab === "all")       return PRODUCTS;
-  if (tab === "jerseys")   return PRODUCTS.filter((p) => JERSEY_CATEGORIES.includes(p.category));
-  if (tab === "gym-wears") return PRODUCTS.filter((p) => p.category === "gloves");
-  return PRODUCTS.filter((p) => p.category === tab);
+function filterByTab(products: Product[], tab: Tab): Product[] {
+  if (tab === "all")       return products;
+  if (tab === "jerseys")   return products.filter((p) => JERSEY_CATEGORIES.has(p.category));
+  if (tab === "gym-wears") return products.filter((p) => p.category === "gloves");
+  return products.filter((p) => p.category === tab);
 }
 
 export default function AllProducts() {
@@ -48,11 +49,13 @@ export default function AllProducts() {
   const [jerseyExpanded, setJerseyExpanded] = useState(false);
   const tabBarRef = useRef<HTMLDivElement>(null);
 
+  const { data: allProducts = [], isLoading } = useProducts();
+
   useEffect(() => {
     trackPageView("/store");
   }, []);
 
-  const byTab = filterByTab(activeTab);
+  const byTab = filterByTab(allProducts, activeTab);
   const products = searchQuery.trim()
     ? byTab.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
     : byTab;
@@ -101,7 +104,6 @@ export default function AllProducts() {
           ))}
         </div>
 
-        {/* Jersey sub-tabs row — expands when Jerseys is clicked */}
         {jerseyExpanded && (
           <div className="max-w-6xl mx-auto px-4 flex gap-1 overflow-x-auto no-scrollbar pb-2">
             {JERSEY_SUB_TABS.map((sub) => (
@@ -130,11 +132,19 @@ export default function AllProducts() {
             className="mb-6 max-w-md"
           />
           <p className="text-muted-foreground text-sm mb-6">
-            {`${products.length} product${products.length !== 1 ? "s" : ""} available`}
+            {isLoading
+              ? "Loading..."
+              : `${products.length} product${products.length !== 1 ? "s" : ""} available`}
             {searchQuery && <span className="text-[#22c55e]"> matching "{searchQuery}"</span>}
           </p>
 
-          {products.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="bg-muted rounded-xl aspect-square animate-pulse" />
+              ))}
+            </div>
+          ) : products.length === 0 ? (
             <div className="text-center py-16 text-muted-foreground">
               <p className="text-lg font-semibold mb-2">No products found</p>
               <p className="text-sm">Try a different search term or category</p>
