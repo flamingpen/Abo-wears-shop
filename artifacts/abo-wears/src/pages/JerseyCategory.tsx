@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { ChevronLeft } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBar } from "@/components/SearchBar";
 import { useProducts } from "@/hooks/useProducts";
@@ -13,6 +12,15 @@ const JERSEY_META: Record<string, { label: string; emoji: string; description: s
   "nfl-jerseys":        { label: "NFL Jerseys",         emoji: "🏈", description: "Authentic NFL jerseys from your favourite teams." },
   "baseball-jerseys":   { label: "Baseball Jerseys",    emoji: "⚾", description: "MLB and baseball jerseys for every fan." },
 };
+
+const JERSEY_TABS = [
+  { id: "club-jerseys",       label: "Club",       emoji: "🏆" },
+  { id: "retro-jerseys",      label: "Retro",      emoji: "⚽" },
+  { id: "country-jerseys",    label: "Country",    emoji: "🌍" },
+  { id: "basketball-jerseys", label: "Basketball", emoji: "🏀" },
+  { id: "nfl-jerseys",        label: "NFL",        emoji: "🏈" },
+  { id: "baseball-jerseys",   label: "Baseball",   emoji: "⚾" },
+];
 
 interface Props {
   category: string;
@@ -36,16 +44,29 @@ export default function JerseyCategory({ category }: Props) {
     <div className="min-h-screen">
       <div className="bg-[#0a0a0a] text-white py-10 px-4">
         <div className="max-w-6xl mx-auto">
-          <Link
-            href="/jerseys"
-            className="inline-flex items-center gap-1.5 text-gray-400 hover:text-[#22c55e] text-sm mb-4 transition-colors"
-          >
-            <ChevronLeft size={15} />
-            All Jerseys
-          </Link>
           <div className="text-4xl mb-2">{meta.emoji}</div>
           <h1 className="font-display text-5xl md:text-6xl text-white mb-2">{meta.label}</h1>
           <p className="text-gray-400">{meta.description}</p>
+        </div>
+      </div>
+
+      {/* Sticky jersey-type tabs */}
+      <div className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 flex gap-1 overflow-x-auto no-scrollbar py-2">
+          {JERSEY_TABS.map((tab) => (
+            <Link
+              key={tab.id}
+              href={`/jerseys/${tab.id}`}
+              className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${
+                category === tab.id
+                  ? "bg-[#22c55e] text-white shadow"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              <span>{tab.emoji}</span>
+              {tab.label}
+            </Link>
+          ))}
         </div>
       </div>
 
