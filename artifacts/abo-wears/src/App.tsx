@@ -11,6 +11,7 @@ import JerseyCategory from "@/pages/JerseyCategory";
 import CategoryPage from "@/pages/CategoryPage";
 import Cart from "@/pages/Cart";
 import About from "@/pages/About";
+import AllProducts from "@/pages/AllProducts";
 import PromoPage from "@/pages/PromoPage";
 import AdminPage from "@/pages/admin/AdminPage";
 import NotFound from "@/pages/not-found";
@@ -74,6 +75,9 @@ function Router() {
       </Route>
       <Route path="/jerseys/baseball-jerseys">
         {() => <StoreLayout><JerseyCategory category="baseball-jerseys" /></StoreLayout>}
+      </Route>
+      <Route path="/store">
+        {() => <StoreLayout><AllProducts /></StoreLayout>}
       </Route>
       <Route path="/jerseys">
         {() => <StoreLayout><Jerseys /></StoreLayout>}

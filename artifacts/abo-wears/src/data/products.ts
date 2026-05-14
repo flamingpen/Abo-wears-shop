@@ -69,12 +69,12 @@ const GLOVE_IMG2 = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b
 const GLOVE_IMG3 = "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=500&h=500&fit=crop&auto=format";
 
 export const PRODUCTS: Product[] = [
-  { id: "rj-1", name: "Nigeria 1994 World Cup Retro",     price: 15000, category: "retro-jerseys", image: nigeriaJerseyImg,      badge: "🇳🇬 Icon",    colors: ["Green", "White", "Black"] },
-  { id: "rj-2", name: "Arsenal 2004 Invincibles Retro",   price: 16000, category: "retro-jerseys", image: arsenalJerseysImg,     badge: "🔥 Popular",  colors: ["Red", "White"] },
-  { id: "rj-3", name: "Man Utd 1999 Treble Retro",        price: 16000, category: "retro-jerseys", image: multiClubJerseysImg,                         colors: ["Red", "Black", "Yellow"] },
-  { id: "rj-4", name: "Brazil 1970 World Cup Retro",      price: 17000, category: "retro-jerseys", image: storeImg,                                     colors: ["Yellow", "Green", "Blue"] },
-  { id: "rj-5", name: "Barcelona 2009 Treble Retro",      price: 17500, category: "retro-jerseys", image: multiClubJerseysImg,   badge: "Best Seller",  colors: ["Blue", "Purple"] },
-  { id: "rj-6", name: "Real Madrid 2002 Champions Retro", price: 16000, category: "retro-jerseys", image: arsenalJerseysImg,                            colors: ["White", "Gold"] },
+  { id: "rj-1", name: "Nigeria 1994 World Cup Retro",     price: 15000, category: "retro-jerseys", image: retroJerseysImg, badge: "🇳🇬 Icon",    colors: ["Green", "White", "Black"] },
+  { id: "rj-2", name: "Arsenal 2004 Invincibles Retro",   price: 16000, category: "retro-jerseys", image: retroJerseysImg, badge: "🔥 Popular",  colors: ["Red", "White"] },
+  { id: "rj-3", name: "Man Utd 1999 Treble Retro",        price: 16000, category: "retro-jerseys", image: retroJerseysImg,                        colors: ["Red", "Black", "Yellow"] },
+  { id: "rj-4", name: "Brazil 1970 World Cup Retro",      price: 17000, category: "retro-jerseys", image: retroJerseysImg,                        colors: ["Yellow", "Green", "Blue"] },
+  { id: "rj-5", name: "Barcelona 2009 Treble Retro",      price: 17500, category: "retro-jerseys", image: retroJerseysImg, badge: "Best Seller",  colors: ["Blue", "Purple"] },
+  { id: "rj-6", name: "Real Madrid 2002 Champions Retro", price: 16000, category: "retro-jerseys", image: retroJerseysImg,                        colors: ["White", "Gold"] },
 
   { id: "cj-1", name: "Arsenal 24/25 Home Jersey",     price: 15000, category: "club-jerseys", image: arsenalJerseysImg,    badge: "New",     colors: ["Red", "White"] },
   { id: "cj-2", name: "Arsenal 24/25 Away Jersey",     price: 15000, category: "club-jerseys", image: arsenalJerseysImg,                      colors: ["Yellow", "Red"] },

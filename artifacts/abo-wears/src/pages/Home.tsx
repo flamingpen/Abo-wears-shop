@@ -46,7 +46,7 @@ const SHOWCASE = [
   { img: arsenalJerseysImg,    label: "Club Jerseys",        href: "/jerseys/club-jerseys" },
   { img: retroJerseysImg,      label: "Retro Jerseys",       href: "/jerseys/retro-jerseys" },
   { img: nigeriaJerseyImg,     label: "Country Jerseys",     href: "/jerseys/country-jerseys" },
-  { img: storeImg,             label: "Browse Full Store",   href: "/jerseys" },
+  { img: storeImg,             label: "Browse Full Store",   href: "/store" },
 ];
 
 const FEATURED_PRODUCTS = PRODUCTS.filter((p) => p.badge).slice(0, 4);
