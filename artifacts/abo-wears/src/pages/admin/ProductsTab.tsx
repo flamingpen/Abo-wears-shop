@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAdminProducts, useCategories } from "@/hooks/useProducts";
+import { useColors, useAddColor, useDeleteColor } from "@/hooks/useColors";
 import { AVAILABLE_COLORS } from "@/lib/colors";
 import { ColorSwatches } from "@/components/ColorSwatches";
 import { ImageUpload } from "@/components/admin/ImageUpload";
@@ -148,6 +149,9 @@ export function ProductsTab() {
   const qc = useQueryClient();
   const { data: products = [], isLoading } = useAdminProducts();
   const { data: categories = [] } = useCategories();
+  const { data: allColors = AVAILABLE_COLORS } = useColors();
+  const addColor = useAddColor();
+  const deleteColor = useDeleteColor();
 
   const [open, setOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -156,6 +160,33 @@ export function ProductsTab() {
   const [err, setErr] = useState("");
   const [filterCat, setFilterCat] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const [showAddColor, setShowAddColor] = useState(false);
+  const [newColor, setNewColor] = useState({ name: "", hex: "#22c55e", letter: "" });
+  const [addingColor, setAddingColor] = useState(false);
+  const [colorErr, setColorErr] = useState("");
+
+  async function handleAddColor() {
+    if (!newColor.name.trim() || !newColor.hex || !newColor.letter.trim()) {
+      setColorErr("Name, hex colour, and abbreviation are all required.");
+      return;
+    }
+    if (allColors.some((c) => c.name.toLowerCase() === newColor.name.trim().toLowerCase())) {
+      setColorErr("A colour with that name already exists.");
+      return;
+    }
+    setAddingColor(true);
+    setColorErr("");
+    try {
+      await addColor({ name: newColor.name.trim(), hex: newColor.hex, letter: newColor.letter.trim() });
+      setNewColor({ name: "", hex: "#22c55e", letter: "" });
+      setShowAddColor(false);
+    } catch {
+      setColorErr("Failed to save colour. Make sure the colours table exists in Supabase.");
+    } finally {
+      setAddingColor(false);
+    }
+  }
 
   function openAdd() {
     setForm({ ...EMPTY_FORM, images: ["", "", ""] });
@@ -438,26 +469,96 @@ export function ProductsTab() {
                   Available Colours <span className="text-gray-600 normal-case font-normal">(select all that apply)</span>
                 </label>
                 <div className="grid grid-cols-4 gap-2">
-                  {AVAILABLE_COLORS.map((c) => {
+                  {allColors.map((c) => {
                     const selected = form.colors.includes(c.name);
+                    const isCustom = !AVAILABLE_COLORS.some((d) => d.name === c.name);
                     return (
-                      <button
-                        key={c.name}
-                        type="button"
-                        onClick={() => toggleColor(c.name)}
-                        className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs border transition-all ${
-                          selected ? "border-[#22c55e] bg-[#22c55e]/10 text-white" : "border-gray-700 bg-[#1a1a1a] text-gray-400"
-                        }`}
-                      >
-                        <span className="w-4 h-4 rounded-full border border-gray-600 shrink-0" style={{ backgroundColor: c.hex }} />
-                        {c.name}
-                        {selected && <Check size={10} className="text-[#22c55e] ml-auto" />}
-                      </button>
+                      <div key={c.name} className="relative group">
+                        <button
+                          type="button"
+                          onClick={() => toggleColor(c.name)}
+                          className={`w-full flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs border transition-all ${
+                            selected ? "border-[#22c55e] bg-[#22c55e]/10 text-white" : "border-gray-700 bg-[#1a1a1a] text-gray-400"
+                          }`}
+                        >
+                          <span className="w-4 h-4 rounded-full border border-gray-600 shrink-0" style={{ backgroundColor: c.hex }} />
+                          <span className="truncate">{c.name}</span>
+                          {selected && <Check size={10} className="text-[#22c55e] ml-auto shrink-0" />}
+                        </button>
+                        {isCustom && (
+                          <button
+                            type="button"
+                            onClick={() => deleteColor(c.name)}
+                            title="Remove colour"
+                            className="absolute -top-1.5 -right-1.5 hidden group-hover:flex w-4 h-4 rounded-full bg-red-600 items-center justify-center"
+                          >
+                            <X size={8} className="text-white" />
+                          </button>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
                 {form.colors.length > 0 && (
                   <p className="text-[#22c55e] text-xs mt-2">Selected: {form.colors.join(", ")}</p>
+                )}
+
+                {/* Add new colour */}
+                {!showAddColor ? (
+                  <button
+                    type="button"
+                    onClick={() => { setShowAddColor(true); setColorErr(""); }}
+                    className="mt-3 flex items-center gap-1.5 text-xs text-gray-400 hover:text-[#22c55e] transition-colors"
+                  >
+                    <Plus size={13} /> Add new colour
+                  </button>
+                ) : (
+                  <div className="mt-3 bg-[#0f0f0f] border border-gray-700 rounded-xl p-3 space-y-2">
+                    <p className="text-white text-xs font-semibold">New Colour</p>
+                    <div className="flex gap-2">
+                      <input
+                        value={newColor.name}
+                        onChange={(e) => setNewColor((n) => ({ ...n, name: e.target.value }))}
+                        placeholder="Name (e.g. Teal)"
+                        className="flex-1 bg-[#1a1a1a] border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#22c55e] placeholder:text-gray-600"
+                      />
+                      <input
+                        value={newColor.letter}
+                        onChange={(e) => setNewColor((n) => ({ ...n, letter: e.target.value }))}
+                        placeholder="Abbr"
+                        maxLength={3}
+                        className="w-16 bg-[#1a1a1a] border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#22c55e] placeholder:text-gray-600"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={newColor.hex}
+                        onChange={(e) => setNewColor((n) => ({ ...n, hex: e.target.value }))}
+                        className="w-8 h-8 rounded cursor-pointer border border-gray-700 bg-transparent"
+                      />
+                      <span className="text-gray-400 text-xs">{newColor.hex}</span>
+                      <span className="text-gray-600 text-xs ml-auto">Pick any colour</span>
+                    </div>
+                    {colorErr && <p className="text-red-400 text-xs">{colorErr}</p>}
+                    <div className="flex gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => { setShowAddColor(false); setColorErr(""); }}
+                        className="flex-1 py-1.5 rounded-lg border border-gray-700 text-gray-400 hover:text-white text-xs transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleAddColor}
+                        disabled={addingColor}
+                        className="flex-1 py-1.5 rounded-lg bg-[#22c55e] hover:bg-[#16a34a] text-black font-bold text-xs transition-colors disabled:opacity-60"
+                      >
+                        {addingColor ? "Saving…" : "Save Colour"}
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
 
@@ -469,7 +570,7 @@ export function ProductsTab() {
                     Add up to 3 photos per colour so customers can scroll through each variant.
                   </p>
                   {form.colors.map((colorName) => {
-                    const colorDef = AVAILABLE_COLORS.find((c) => c.name === colorName);
+                    const colorDef = allColors.find((c) => c.name === colorName);
                     return (
                       <ColorImageRow
                         key={colorName}

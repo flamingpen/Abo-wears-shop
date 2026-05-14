@@ -53,6 +53,14 @@ export type DbPromoProduct = {
   created_at: string;
 };
 
+export type DbColor = {
+  id: string;
+  name: string;
+  hex: string;
+  letter: string;
+  created_at: string;
+};
+
 export type DbPageView = {
   id: number;
   page: string;
