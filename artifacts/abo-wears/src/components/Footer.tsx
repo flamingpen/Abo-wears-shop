@@ -70,6 +70,12 @@ export function Footer() {
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
+                <Phone size={16} className="text-[#22c55e] mt-0.5 shrink-0" />
+                <a href="tel:08133423539" className="text-gray-400 hover:text-white text-sm transition-colors">
+                  08133423539
+                </a>
+              </li>
+              <li className="flex items-start gap-2.5">
                 <MapPin size={16} className="text-[#22c55e] mt-0.5 shrink-0" />
                 <span className="text-gray-400 text-sm">
                   OAU New Market, Shop 10, Zone B, Block 6

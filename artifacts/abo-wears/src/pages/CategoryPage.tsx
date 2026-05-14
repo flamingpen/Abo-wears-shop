@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
+import { ChevronDown } from "lucide-react";
 import { CATEGORIES } from "@/data/products";
 import type { Category } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
@@ -13,6 +14,15 @@ const STORE_TABS = [
   { id: "shorts",    label: "Shorts",     emoji: "🩳", href: "/shorts"     },
   { id: "face-caps", label: "Face Caps",  emoji: "🧢", href: "/face-caps"  },
   { id: "gym-wears", label: "Gym Wears",  emoji: "🥊", href: "/gym-wears"  },
+];
+
+const JERSEY_SUB_TABS = [
+  { id: "club-jerseys",       label: "Club",       emoji: "🏆" },
+  { id: "retro-jerseys",      label: "Retro",      emoji: "⚽" },
+  { id: "country-jerseys",    label: "Country",    emoji: "🌍" },
+  { id: "basketball-jerseys", label: "Basketball", emoji: "🏀" },
+  { id: "nfl-jerseys",        label: "NFL",        emoji: "🏈" },
+  { id: "baseball-jerseys",   label: "Baseball",   emoji: "⚾" },
 ];
 
 interface CategoryPageProps {
@@ -38,6 +48,7 @@ export default function CategoryPage({ category }: CategoryPageProps) {
   };
 
   const activeTab = category === "gloves" ? "gym-wears" : (category as string);
+  const [jerseyExpanded, setJerseyExpanded] = useState(false);
 
   return (
     <div className="min-h-screen">
@@ -52,21 +63,53 @@ export default function CategoryPage({ category }: CategoryPageProps) {
       {/* Sticky all-categories tabs */}
       <div className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 flex gap-1 overflow-x-auto no-scrollbar py-2">
-          {STORE_TABS.map((tab) => (
-            <Link
-              key={tab.id}
-              href={tab.href}
-              className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${
-                activeTab === tab.id
-                  ? "bg-[#22c55e] text-white shadow"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              <span>{tab.emoji}</span>
-              {tab.label}
-            </Link>
-          ))}
+          {STORE_TABS.map((tab) => {
+            if (tab.id === "jerseys") {
+              return (
+                <button
+                  key="jerseys"
+                  type="button"
+                  onClick={() => setJerseyExpanded((v) => !v)}
+                  className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200"
+                >
+                  <span>{tab.emoji}</span>
+                  {tab.label}
+                  <ChevronDown size={13} className={`transition-transform ${jerseyExpanded ? "rotate-180" : ""}`} />
+                </button>
+              );
+            }
+            return (
+              <Link
+                key={tab.id}
+                href={tab.href}
+                className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? "bg-[#22c55e] text-white shadow"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                <span>{tab.emoji}</span>
+                {tab.label}
+              </Link>
+            );
+          })}
         </div>
+
+        {/* Jersey sub-tabs row — expands when Jerseys is clicked */}
+        {jerseyExpanded && (
+          <div className="max-w-6xl mx-auto px-4 flex gap-1 overflow-x-auto no-scrollbar pb-2">
+            {JERSEY_SUB_TABS.map((sub) => (
+              <Link
+                key={sub.id}
+                href={`/jerseys/${sub.id}`}
+                className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-[#f0fdf4] text-[#16a34a] border border-[#bbf7d0] hover:bg-[#22c55e] hover:text-white transition-all"
+              >
+                <span>{sub.emoji}</span>
+                {sub.label}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="relative">
