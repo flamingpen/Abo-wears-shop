@@ -162,13 +162,39 @@ export function ProductsTab() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const [showAddColor, setShowAddColor] = useState(false);
-  const [newColor, setNewColor] = useState({ name: "", hex: "#22c55e", letter: "" });
+  const [newColor, setNewColor] = useState({ name: "", hex: "#22c55e" });
   const [addingColor, setAddingColor] = useState(false);
   const [colorErr, setColorErr] = useState("");
 
+  function autoAbbr(name: string): string {
+    const words = name.trim().split(/\s+/).filter(Boolean);
+    if (words.length === 0) return "";
+    if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+    return words.map((w) => w[0]).join("").slice(0, 3).toUpperCase();
+  }
+
+  function cssColorToHex(name: string): string | null {
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 1;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+      ctx.fillStyle = "#000";
+      ctx.fillStyle = name;
+      const parsed = ctx.fillStyle;
+      if (parsed === "#000000" && name.toLowerCase().replace(/\s/g, "") !== "black") return null;
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+
+  const autoHex = cssColorToHex(newColor.name.trim()) ?? cssColorToHex(newColor.name.trim().replace(/\s+/g, ""));
+  const resolvedHex = autoHex ?? newColor.hex;
+
   async function handleAddColor() {
-    if (!newColor.name.trim() || !newColor.hex || !newColor.letter.trim()) {
-      setColorErr("Name, hex colour, and abbreviation are all required.");
+    if (!newColor.name.trim()) {
+      setColorErr("Please enter a colour name.");
       return;
     }
     if (allColors.some((c) => c.name.toLowerCase() === newColor.name.trim().toLowerCase())) {
@@ -178,8 +204,8 @@ export function ProductsTab() {
     setAddingColor(true);
     setColorErr("");
     try {
-      await addColor({ name: newColor.name.trim(), hex: newColor.hex, letter: newColor.letter.trim() });
-      setNewColor({ name: "", hex: "#22c55e", letter: "" });
+      await addColor({ name: newColor.name.trim(), hex: resolvedHex, letter: autoAbbr(newColor.name) });
+      setNewColor({ name: "", hex: "#22c55e" });
       setShowAddColor(false);
     } catch {
       setColorErr("Failed to save colour. Make sure the colours table exists in Supabase.");
@@ -515,31 +541,39 @@ export function ProductsTab() {
                 ) : (
                   <div className="mt-3 bg-[#0f0f0f] border border-gray-700 rounded-xl p-3 space-y-2">
                     <p className="text-white text-xs font-semibold">New Colour</p>
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
+                      {/* Live colour circle preview */}
+                      <div
+                        className="w-8 h-8 rounded-full border border-gray-600 flex-shrink-0 flex items-center justify-center text-[9px] font-bold"
+                        style={{ backgroundColor: resolvedHex, color: "#fff", textShadow: "0 0 2px #000" }}
+                      >
+                        {autoAbbr(newColor.name) || "?"}
+                      </div>
                       <input
                         value={newColor.name}
                         onChange={(e) => setNewColor((n) => ({ ...n, name: e.target.value }))}
-                        placeholder="Name (e.g. Teal)"
+                        placeholder="Colour name (e.g. Teal)"
                         className="flex-1 bg-[#1a1a1a] border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#22c55e] placeholder:text-gray-600"
                       />
-                      <input
-                        value={newColor.letter}
-                        onChange={(e) => setNewColor((n) => ({ ...n, letter: e.target.value }))}
-                        placeholder="Abbr"
-                        maxLength={3}
-                        className="w-16 bg-[#1a1a1a] border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#22c55e] placeholder:text-gray-600"
-                      />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={newColor.hex}
-                        onChange={(e) => setNewColor((n) => ({ ...n, hex: e.target.value }))}
-                        className="w-8 h-8 rounded cursor-pointer border border-gray-700 bg-transparent"
-                      />
-                      <span className="text-gray-400 text-xs">{newColor.hex}</span>
-                      <span className="text-gray-600 text-xs ml-auto">Pick any colour</span>
-                    </div>
+                    {/* Manual hex picker — only shown when name doesn't resolve to a CSS colour */}
+                    {!autoHex && newColor.name.trim() && (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={newColor.hex}
+                          onChange={(e) => setNewColor((n) => ({ ...n, hex: e.target.value }))}
+                          className="w-8 h-8 rounded cursor-pointer border border-gray-700 bg-transparent"
+                        />
+                        <span className="text-gray-400 text-xs">{newColor.hex}</span>
+                        <span className="text-gray-500 text-xs ml-auto">Name not recognised — pick a colour</span>
+                      </div>
+                    )}
+                    {autoHex && newColor.name.trim() && (
+                      <p className="text-gray-500 text-[11px]">
+                        Colour auto-detected · abbr: <span className="text-gray-300">{autoAbbr(newColor.name)}</span>
+                      </p>
+                    )}
                     {colorErr && <p className="text-red-400 text-xs">{colorErr}</p>}
                     <div className="flex gap-2 pt-1">
                       <button
