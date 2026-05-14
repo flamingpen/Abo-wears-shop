@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { ShoppingBag, Star, ChevronRight } from "lucide-react";
 import { PRODUCTS, formatPrice } from "@/data/products";
-import { storeImg, arsenalJerseysImg, multiClubJerseysImg, nigeriaJerseyImg } from "@/data/products";
+import { storeImg, arsenalJerseysImg, multiClubJerseysImg, nigeriaJerseyImg, retroJerseysImg } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
 import { SearchBar } from "@/components/SearchBar";
 import { useProducts, useCategories } from "@/hooks/useProducts";
@@ -44,7 +44,7 @@ const HERO_CATEGORIES = [
 
 const SHOWCASE = [
   { img: arsenalJerseysImg,    label: "Club Jerseys",        href: "/jerseys/club-jerseys" },
-  { img: multiClubJerseysImg,  label: "All Teams Available", href: "/jerseys/club-jerseys" },
+  { img: retroJerseysImg,      label: "Retro Jerseys",       href: "/jerseys/retro-jerseys" },
   { img: nigeriaJerseyImg,     label: "Country Jerseys",     href: "/jerseys/country-jerseys" },
   { img: storeImg,             label: "Browse Full Store",   href: "/jerseys" },
 ];

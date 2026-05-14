@@ -2,8 +2,9 @@ import storeImg from "@assets/2026-02-17_1777531258431.webp";
 import arsenalJerseysImg from "@assets/unnamed_(3)_1777531271648.webp";
 import multiClubJerseysImg from "@assets/unnamed_(1)_1777531271703.webp";
 import nigeriaJerseyImg from "@assets/unnamed_(4)_1777531271737.webp";
+import retroJerseysImg from "@assets/IMG-20260513-WA0006_1778762099219.jpg";
 
-export { storeImg, arsenalJerseysImg, multiClubJerseysImg, nigeriaJerseyImg };
+export { storeImg, arsenalJerseysImg, multiClubJerseysImg, nigeriaJerseyImg, retroJerseysImg };
 
 export type Category =
   | "retro-jerseys"
