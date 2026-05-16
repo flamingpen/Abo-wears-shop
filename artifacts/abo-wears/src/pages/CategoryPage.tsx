@@ -31,7 +31,7 @@ interface CategoryPageProps {
 
 export default function CategoryPage({ category }: CategoryPageProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: allProducts = [], isLoading } = useProducts(category as string);
+  const { data: allProducts = [], isLoading } = useProducts(category === "gym-wears" ? "gloves" : category as string);
 
   useEffect(() => {
     trackPageView(`/category/${category}`);
@@ -41,7 +41,8 @@ export default function CategoryPage({ category }: CategoryPageProps) {
     ? allProducts.filter((p) => p.name.toLowerCase().includes(searchQuery.toLowerCase()))
     : allProducts;
 
-  const catInfo = CATEGORIES.find((c) => c.id === category) ?? {
+  const lookupId = category === "gym-wears" ? "gloves" : category;
+  const catInfo = CATEGORIES.find((c) => c.id === lookupId) ?? {
     label: category,
     icon: "📦",
     description: `Browse all ${category} products`,
