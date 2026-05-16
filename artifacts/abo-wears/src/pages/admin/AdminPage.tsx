@@ -5,21 +5,23 @@ import { ProductsTab } from "./ProductsTab";
 import { CategoriesTab } from "./CategoriesTab";
 import { PromosTab } from "./PromosTab";
 import { AnalyticsTab } from "./AnalyticsTab";
+import { QRCodeTab } from "./QRCodeTab";
 import { Link } from "wouter";
-import { Package, LayoutGrid, Tag, BarChart2, LogOut, ExternalLink } from "lucide-react";
+import { Package, LayoutGrid, Tag, BarChart2, LogOut, ExternalLink, QrCode } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 
 const ADMIN_EMAILS = (import.meta.env.VITE_ADMIN_EMAILS ?? "")
   .split(",")
   .map((e: string) => e.trim().toLowerCase());
 
-type Tab = "products" | "categories" | "promos" | "analytics";
+type Tab = "products" | "categories" | "promos" | "analytics" | "qrcode";
 
 const NAV_ITEMS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: "products", label: "Products", icon: <Package size={18} /> },
+  { id: "products",   label: "Products",   icon: <Package size={18} /> },
   { id: "categories", label: "Categories", icon: <LayoutGrid size={18} /> },
-  { id: "promos", label: "Promos", icon: <Tag size={18} /> },
-  { id: "analytics", label: "Analytics", icon: <BarChart2 size={18} /> },
+  { id: "promos",     label: "Promos",     icon: <Tag size={18} /> },
+  { id: "analytics",  label: "Analytics",  icon: <BarChart2 size={18} /> },
+  { id: "qrcode",     label: "QR Code",    icon: <QrCode size={18} /> },
 ];
 
 function Unauthorized({ onSignOut }: { onSignOut: () => void }) {
@@ -189,6 +191,7 @@ export default function AdminPage() {
           {activeTab === "categories" && <CategoriesTab />}
           {activeTab === "promos" && <PromosTab />}
           {activeTab === "analytics" && <AnalyticsTab />}
+          {activeTab === "qrcode" && <QRCodeTab />}
         </div>
       </main>
     </div>

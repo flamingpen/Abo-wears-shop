@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "D7vgfB4_fLRGB8h92ba9E"
+uri = "file://abowears-qr.png"
+type = "image"
+title = "ABO Wears QR Code — abowears.com.ng"
